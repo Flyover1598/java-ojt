@@ -62,7 +62,7 @@ public class AuthorService {
   /**
    * Fetches the complete list of authors.
    */
-  public List getAuthorList() {
+  public List<GetAuthorSummaryResponse> getAuthorList() { // Should return an empty list on empty DB
     List<GetAuthorSummaryResponse> response = new ArrayList<>();
     Iterable<Author> authors = authorRepository.findAll();
     for (Author author : authors) {

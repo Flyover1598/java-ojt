@@ -26,9 +26,10 @@ public class AuthorController {
 
   /**
    * Retrieves a list of all authors.
+   * @return a ResponseEntity containing a map of "Authors": [list of GetAuthorSummaryResponse]
    */
   @GetMapping("/")
-  public ResponseEntity<Map<String, List<GetAuthorSummaryResponse>>> getAuthors(
+  public ResponseEntity<Map<String, List<GetAuthorSummaryResponse>>> getAuthorsList(
       // param
   ) {
     Map<String, List<GetAuthorSummaryResponse>> response = new HashMap<>();
