@@ -1,8 +1,12 @@
 package com.example.javaOjt.controllers;
 
+import com.example.javaOjt.beans.responses.author.GetAuthorSummaryResponse;
 import com.example.javaOjt.beans.responses.author.GetAuthorResponse;
 import com.example.javaOjt.exceptions.OjtNotFoundException;
 import com.example.javaOjt.services.AuthorService;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -19,6 +23,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthorController {
 
   private final AuthorService authorService;
+
+  /**
+   * Retrieves a list of all authors.
+   */
+  @GetMapping("/")
+  public ResponseEntity<Map<String, List<GetAuthorSummaryResponse>>> getAuthors(
+      // param
+  ) {
+    Map<String, List<GetAuthorSummaryResponse>> response = new HashMap<>();
+    response.put("Author", authorService.getAuthorList());
+    return ResponseEntity.ok(response);
+  }
 
   /**
    * Retrieves an author by his ID.
@@ -39,4 +55,5 @@ public class AuthorController {
     }
     return ResponseEntity.ok(response);
   }
+
 }
