@@ -1,7 +1,6 @@
 package com.example.javaOjt.services;
 
-import com.example.javaOjt.beans.responses.author.GetAuthorSummaryResponse;
-import java.util.ArrayList;
+import com.example.javaOjt.beans.responses.author.GetAuthorsResponse;
 import java.util.List;
 import java.util.Optional;
 import com.example.javaOjt.beans.dtos.AuthorWithBookDTO;
@@ -62,12 +61,8 @@ public class AuthorService {
   /**
    * Fetches the complete list of authors.
    */
-  public List<GetAuthorSummaryResponse> getAuthorList() { // Should return an empty list on empty DB
-    List<GetAuthorSummaryResponse> response = new ArrayList<>();
-    authorRepository.findAll().forEach(author -> 
-      response.add(new GetAuthorSummaryResponse(author))
-    );
-    return response;
+  public GetAuthorsResponse getAuthorsList() { // Should return an empty list on empty DB
+    return new GetAuthorsResponse(authorRepository.findAll());
   }
 
 }

@@ -1,12 +1,9 @@
 package com.example.javaOjt.controllers;
 
-import com.example.javaOjt.beans.responses.author.GetAuthorSummaryResponse;
+import com.example.javaOjt.beans.responses.author.GetAuthorsResponse;
 import com.example.javaOjt.beans.responses.author.GetAuthorResponse;
 import com.example.javaOjt.exceptions.OjtNotFoundException;
 import com.example.javaOjt.services.AuthorService;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -29,11 +26,10 @@ public class AuthorController {
    * @return a ResponseEntity containing a map of "Authors": [list of GetAuthorSummaryResponse]
    */
   @GetMapping("/")
-  public ResponseEntity<Map<String, List<GetAuthorSummaryResponse>>> getAuthorsList(
+  public ResponseEntity<GetAuthorsResponse> getAuthorsList(
       // param
   ) {
-    Map<String, List<GetAuthorSummaryResponse>> response = new HashMap<>();
-    response.put("Authors", authorService.getAuthorList());
+    GetAuthorsResponse response = authorService.getAuthorsList();
     return ResponseEntity.ok(response);
   }
 
