@@ -1,6 +1,7 @@
 package com.example.javaOjt.services;
 
 import com.example.javaOjt.beans.responses.author.GetAuthorsResponse;
+
 import com.example.javaOjt.beans.responses.author.GetAuthorsResponse.AuthorInfo;
 import com.example.javaOjt.controllers.AuthorSortBy;
 import com.example.javaOjt.controllers.Order;
@@ -64,6 +65,7 @@ public class AuthorService {
   }
 
   /**
+
    * Fetches the list of authors and sort if needed.
    */
   public GetAuthorsResponse getAuthorsList(@Nullable AuthorSortBy attribute, @Nullable Order order) { // Should return an empty list on empty DB

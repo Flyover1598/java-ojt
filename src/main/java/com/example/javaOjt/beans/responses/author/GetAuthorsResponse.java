@@ -15,6 +15,7 @@ import lombok.NonNull;
 public class GetAuthorsResponse { // Authorを返すだけでも良い気がするが、Authorの構造が変わるとResponseも変わるのでこれを挟もうと思った
 
   public record AuthorInfo( // 確かに著者情報ではなくこれをラップしたものが良い
+
       @JsonProperty("id") Integer id,
       @JsonProperty("name") String name
   ) {}
