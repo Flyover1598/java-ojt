@@ -1,5 +1,6 @@
 package com.example.javaOjt.services;
 
+import com.example.javaOjt.beans.responses.author.GetAuthorsResponse;
 import java.util.List;
 import java.util.Optional;
 import com.example.javaOjt.beans.dtos.AuthorWithBookDTO;
@@ -55,6 +56,13 @@ public class AuthorService {
       }
     }
     return response;
+  }
+
+  /**
+   * Fetches the complete list of authors.
+   */
+  public GetAuthorsResponse getAuthorsList() { // Should return an empty list on empty DB
+    return new GetAuthorsResponse(authorRepository.findAll());
   }
 
 }

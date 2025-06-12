@@ -1,5 +1,6 @@
 package com.example.javaOjt.controllers;
 
+import com.example.javaOjt.beans.responses.author.GetAuthorsResponse;
 import com.example.javaOjt.beans.responses.author.GetAuthorResponse;
 import com.example.javaOjt.exceptions.OjtNotFoundException;
 import com.example.javaOjt.services.AuthorService;
@@ -21,6 +22,18 @@ public class AuthorController {
   private final AuthorService authorService;
 
   /**
+   * Retrieves a list of all authors.
+   * @return a ResponseEntity containing a map of "Authors": [list of GetAuthorSummaryResponse]
+   */
+  @GetMapping("/")
+  public ResponseEntity<GetAuthorsResponse> getAuthorsList(
+      // param
+  ) {
+    GetAuthorsResponse response = authorService.getAuthorsList();
+    return ResponseEntity.ok(response);
+  }
+
+  /**
    * Retrieves an author by his ID.
    *
    * @param id        the ID of the author to retrieve
@@ -39,4 +52,5 @@ public class AuthorController {
     }
     return ResponseEntity.ok(response);
   }
+
 }
