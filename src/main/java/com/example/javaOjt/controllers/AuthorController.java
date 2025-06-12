@@ -33,7 +33,7 @@ public class AuthorController {
       // param
   ) {
     Map<String, List<GetAuthorSummaryResponse>> response = new HashMap<>();
-    response.put("Author", authorService.getAuthorList());
+    response.put("Authors", authorService.getAuthorList());
     return ResponseEntity.ok(response);
   }
 
