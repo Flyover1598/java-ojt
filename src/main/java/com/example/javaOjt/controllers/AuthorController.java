@@ -23,13 +23,22 @@ public class AuthorController {
 
   /**
    * Retrieves a list of all authors.
-   * @return a ResponseEntity containing a map of "Authors": [list of GetAuthorSummaryResponse]
+   * The list will be sorted when attribute OR order is specified.
+   *
+   * @param attribute attribute to sort by (id, name)
+   *                  id: Author ID (default)
+   *                  name: Author's name
+   * @param order     sorting order (asc, dsc)
+   *                  asc: ascending (default)
+   *                  dsc: descending
+   * @return a ResponseEntity containing the GetAuthorsResponse
    */
   @GetMapping("/")
   public ResponseEntity<GetAuthorsResponse> getAuthorsList(
-      // param
-  ) {
-    GetAuthorsResponse response = authorService.getAuthorsList();
+      @RequestParam(value = "sort_by", required = false) AuthorSortBy attribute,
+      @RequestParam(value = "order", required = false) Order order
+  ) { // param, Optional<>にするのも考えましたが逆に複雑になりそうで断念した（後でそのツケを払うかも？）
+    GetAuthorsResponse response = authorService.getAuthorsList(attribute, order);
     return ResponseEntity.ok(response);
   }
 
