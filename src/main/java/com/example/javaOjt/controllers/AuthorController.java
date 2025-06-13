@@ -2,6 +2,8 @@ package com.example.javaOjt.controllers;
 
 import com.example.javaOjt.beans.responses.author.GetAuthorsResponse;
 import com.example.javaOjt.beans.responses.author.GetAuthorResponse;
+import com.example.javaOjt.enums.AuthorSortBy;
+import com.example.javaOjt.enums.Order;
 import com.example.javaOjt.exceptions.OjtNotFoundException;
 import com.example.javaOjt.services.AuthorService;
 import lombok.RequiredArgsConstructor;

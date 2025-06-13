@@ -3,8 +3,8 @@ package com.example.javaOjt.services;
 import com.example.javaOjt.beans.responses.author.GetAuthorsResponse;
 
 import com.example.javaOjt.beans.responses.author.GetAuthorsResponse.AuthorInfo;
-import com.example.javaOjt.controllers.AuthorSortBy;
-import com.example.javaOjt.controllers.Order;
+import com.example.javaOjt.enums.AuthorSortBy;
+import com.example.javaOjt.enums.Order;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
