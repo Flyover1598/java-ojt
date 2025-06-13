@@ -1,18 +1,15 @@
 package com.example.javaOjt.services;
 
-import com.example.javaOjt.beans.responses.author.GetAuthorsResponse;
-
-import com.example.javaOjt.beans.responses.author.GetAuthorsResponse.AuthorInfo;
-import com.example.javaOjt.enums.AuthorSortBy;
-import com.example.javaOjt.enums.Order;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
 import com.example.javaOjt.beans.dtos.AuthorWithBookDTO;
 import com.example.javaOjt.beans.entities.Author;
 import com.example.javaOjt.beans.entities.AuthorPK;
 import com.example.javaOjt.beans.responses.author.GetAuthorResponse;
+import com.example.javaOjt.beans.responses.author.GetAuthorsResponse;
+import com.example.javaOjt.enums.AuthorSortBy;
+import com.example.javaOjt.enums.Order;
 import com.example.javaOjt.repositories.AuthorRepository;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
@@ -73,7 +70,10 @@ public class AuthorService {
    * @return GetAuthorsResponse containing the list of authors
    */
   public GetAuthorsResponse getAuthorsList(@Nullable AuthorSortBy attribute, @Nullable Order order) { // Should return an empty list on empty DB
-    GetAuthorsResponse response = new GetAuthorsResponse(authorRepository.findAll());
+    String attributeString = (attribute == null) ? "id" : attribute.toString();
+    String orderString = (order == Order.DSC) ? "desc" : "asc";
+    GetAuthorsResponse response = new GetAuthorsResponse(authorRepository.authorsList(attributeString, orderString));
+/*    GetAuthorsResponse response = new GetAuthorsResponse(authorRepository.findAll());
     if (attribute == null && order == null) return response;
     if (attribute == null) attribute = AuthorSortBy.ID;
     switch (attribute) { // 今はnameとidしかないから一つのswitchで完結、めちゃくちゃ増えたらまずcomparator決めるかも
@@ -93,7 +93,7 @@ public class AuthorService {
             Comparator.comparing(AuthorInfo::id, intComparator)
         );
       }
-    }
+    }*/
     return response;
   }
 

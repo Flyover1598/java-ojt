@@ -29,4 +29,10 @@ public class GetAuthorsResponse { // Authorを返すだけでも良い気がす�
     );
   }
 
+  public GetAuthorsResponse(@NonNull List<Author> authorsList) {
+    authorsList.forEach(
+        author -> this.authorsSummaryList.add(new AuthorInfo(author.getId(), author.getName()))
+    );
+  }
+
 }

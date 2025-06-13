@@ -26,7 +26,7 @@ public class AuthorController {
 
   /**
    * Retrieves a list of all authors.
-   * The list will be sorted when attribute OR order is specified.
+   * The list will ALWAYS be sorted.
    *
    * @param attributeString attribute to sort by (id, name); case-insensitive
    *                        id: Author ID (default)
