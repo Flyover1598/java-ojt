@@ -3,6 +3,7 @@ package com.example.javaOjt.controllers;
 import com.example.javaOjt.beans.responses.author.GetAuthorsResponse;
 import com.example.javaOjt.beans.responses.author.GetAuthorResponse;
 import com.example.javaOjt.enums.AuthorSortBy;
+import com.example.javaOjt.enums.IEnum;
 import com.example.javaOjt.enums.Order;
 import com.example.javaOjt.exceptions.OjtNotFoundException;
 import com.example.javaOjt.services.AuthorService;
@@ -27,19 +28,21 @@ public class AuthorController {
    * Retrieves a list of all authors.
    * The list will be sorted when attribute OR order is specified.
    *
-   * @param attribute attribute to sort by (id, name)
-   *                  id: Author ID (default)
-   *                  name: Author's name
-   * @param order     sorting order (asc, dsc)
-   *                  asc: ascending (default)
-   *                  dsc: descending
+   * @param attributeString attribute to sort by (id, name); case-insensitive
+   *                        id: Author ID (default)
+   *                        name: Author's name
+   * @param orderString     sorting order (asc, dsc); case-insensitive
+   *                        asc: ascending (default)
+   *                        dsc: descending
    * @return a ResponseEntity containing the GetAuthorsResponse
    */
   @GetMapping("/")
   public ResponseEntity<GetAuthorsResponse> getAuthorsList(
-      @RequestParam(value = "sort_by", required = false) AuthorSortBy attribute,
-      @RequestParam(value = "order", required = false) Order order
-  ) { // param, Optional<>にするのも考えましたが逆に複雑になりそうで断念した（後でそのツケを払うかも？）
+      @RequestParam(value = "sort_by", required = false) String attributeString,
+      @RequestParam(value = "order", required = false) String orderString
+  ) {
+    AuthorSortBy attribute = IEnum.byString(AuthorSortBy.class, attributeString, "Invalid sort_by attribute");
+    Order order = IEnum.byString(Order.class, orderString, "Invalid order");
     GetAuthorsResponse response = authorService.getAuthorsList(attribute, order);
     return ResponseEntity.ok(response);
   }

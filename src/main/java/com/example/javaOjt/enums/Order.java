@@ -1,5 +1,5 @@
 package com.example.javaOjt.enums;
 
-public enum Order {
-  asc, dsc
+public enum Order implements IEnum<Order> {
+  ASC, DSC
 }

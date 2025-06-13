@@ -75,18 +75,18 @@ public class AuthorService {
   public GetAuthorsResponse getAuthorsList(@Nullable AuthorSortBy attribute, @Nullable Order order) { // Should return an empty list on empty DB
     GetAuthorsResponse response = new GetAuthorsResponse(authorRepository.findAll());
     if (attribute == null && order == null) return response;
-    if (attribute == null) attribute = AuthorSortBy.id;
+    if (attribute == null) attribute = AuthorSortBy.ID;
     switch (attribute) { // 今はnameとidしかないから一つのswitchで完結、めちゃくちゃ増えたらまずcomparator決めるかも
-      case AuthorSortBy.name -> {
-        Comparator<String> stringComparator = (order == Order.dsc)
+      case AuthorSortBy.NAME -> {
+        Comparator<String> stringComparator = (order == Order.DSC)
             ? Comparator.reverseOrder()
             : Comparator.naturalOrder(); // Orderはascとdsc以外ありえないと思う
         response.getAuthorsSummaryList().sort(
             Comparator.comparing(AuthorInfo::name, stringComparator)
         );
       }
-      case AuthorSortBy.id -> {
-        Comparator<Integer> intComparator = (order == Order.dsc)
+      case AuthorSortBy.ID -> {
+        Comparator<Integer> intComparator = (order == Order.DSC)
             ? Comparator.reverseOrder()
             : Comparator.naturalOrder();
         response.getAuthorsSummaryList().sort(
