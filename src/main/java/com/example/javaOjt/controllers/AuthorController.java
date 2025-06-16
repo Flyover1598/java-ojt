@@ -7,6 +7,7 @@ import com.example.javaOjt.enums.IEnum;
 import com.example.javaOjt.enums.Order;
 import com.example.javaOjt.exceptions.OjtNotFoundException;
 import com.example.javaOjt.services.AuthorService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -34,16 +35,19 @@ public class AuthorController {
    * @param orderString     sorting order (asc, dsc); case-insensitive
    *                        asc: ascending (default)
    *                        dsc: descending
+   * @param ids             list of integers delimited by comma
+   *                        returns empty response for unexistent ids
    * @return a ResponseEntity containing the GetAuthorsResponse
    */
   @GetMapping("/")
   public ResponseEntity<GetAuthorsResponse> getAuthorsList(
       @RequestParam(value = "sort_by", required = false) String attributeString,
-      @RequestParam(value = "order", required = false) String orderString
+      @RequestParam(value = "order", required = false) String orderString,
+      @RequestParam(value = "ids", required = false) List<Integer> ids
   ) {
     AuthorSortBy attribute = IEnum.byString(AuthorSortBy.class, attributeString, "Invalid sort_by attribute");
     Order order = IEnum.byString(Order.class, orderString, "Invalid order");
-    GetAuthorsResponse response = authorService.getAuthorsList(attribute, order);
+    GetAuthorsResponse response = authorService.getAuthorsList(attribute, order, ids);
     return ResponseEntity.ok(response);
   }
 

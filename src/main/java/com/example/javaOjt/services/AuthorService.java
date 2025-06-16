@@ -66,12 +66,13 @@ public class AuthorService {
    * Fetches the list of authors and sort if needed.
    *
    * @param attribute the attribute to sort by (id, name)
-   * @param order the order to sort by (asc, dsc)
+   * @param order     the order to sort by (asc, dsc)
+   * @param ids       the
    * @return GetAuthorsResponse containing the list of authors
    */
-  public GetAuthorsResponse getAuthorsList(@Nullable AuthorSortBy attribute, @Nullable Order order) { // Should return an empty list on empty DB
+  public GetAuthorsResponse getAuthorsList(@Nullable AuthorSortBy attribute, @Nullable Order order, @Nullable List<Integer> ids) { // Should return an empty list on empty DB
     attribute = (attribute == null) ? AuthorSortBy.ID : attribute;
-    return new GetAuthorsResponse(authorRepository.getAuthorsList(attribute, order));
+    return new GetAuthorsResponse(authorRepository.getAuthorsList(attribute, order, ids));
   }
 
 }

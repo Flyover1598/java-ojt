@@ -8,6 +8,7 @@ import com.example.javaOjt.enums.AuthorSortBy;
 import com.example.javaOjt.enums.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -35,12 +36,16 @@ public class AuthorDaoImpl implements AuthorDao {
   }
 
 
-  public List<Author> getAuthorsList(AuthorSortBy attribute, @Nullable Order order) {
+  public List<Author> getAuthorsList(AuthorSortBy attribute, @Nullable Order order, @Nullable List<Integer> ids) {
     OrderSpecifier<?> orderSpecifier = switch (attribute) {
       case AuthorSortBy.NAME -> (order == Order.DSC) ? QAuthor.author.name.desc() : QAuthor.author.name.asc();
       case AuthorSortBy.ID -> (order == Order.DSC) ? QAuthor.author.id.desc() : QAuthor.author.id.asc();
     };
-    return jpaQueryFactory.selectFrom(QAuthor.author)
+    JPAQuery<Author> allEntries = jpaQueryFactory.selectFrom(QAuthor.author);
+    JPAQuery<Author> select = (ids == null)
+        ? allEntries
+        : allEntries.where(QAuthor.author.id.in(ids));
+    return select
         .orderBy(orderSpecifier)
         .fetch();
   }
