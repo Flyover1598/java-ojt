@@ -35,8 +35,10 @@ public class AuthorController {
    * @param orderString     sorting order (asc, dsc); case-insensitive
    *                        asc: ascending (default)
    *                        dsc: descending
+
    * @param ids             list of integers delimited by comma
    *                        returns empty response for unexistent ids
+
    * @return a ResponseEntity containing the GetAuthorsResponse
    */
   @GetMapping("/")
@@ -48,6 +50,7 @@ public class AuthorController {
     AuthorSortBy attribute = IEnum.byString(AuthorSortBy.class, attributeString, "Invalid sort_by attribute");
     Order order = IEnum.byString(Order.class, orderString, "Invalid order");
     GetAuthorsResponse response = authorService.getAuthorsList(attribute, order, ids);
+
     return ResponseEntity.ok(response);
   }
 

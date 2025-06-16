@@ -73,6 +73,6 @@ public class AuthorService {
   public GetAuthorsResponse getAuthorsList(@Nullable AuthorSortBy attribute, @Nullable Order order, @Nullable List<Integer> ids) { // Should return an empty list on empty DB
     attribute = (attribute == null) ? AuthorSortBy.ID : attribute;
     return new GetAuthorsResponse(authorRepository.getAuthorsList(attribute, order, ids));
-  }
 
+  }
 }
