@@ -2,6 +2,9 @@ package com.example.javaOjt.controllers;
 
 import com.example.javaOjt.beans.responses.author.GetAuthorsResponse;
 import com.example.javaOjt.beans.responses.author.GetAuthorResponse;
+import com.example.javaOjt.enums.AuthorSortBy;
+import com.example.javaOjt.enums.IEnum;
+import com.example.javaOjt.enums.Order;
 import com.example.javaOjt.exceptions.OjtNotFoundException;
 import com.example.javaOjt.services.AuthorService;
 import lombok.RequiredArgsConstructor;
@@ -23,13 +26,24 @@ public class AuthorController {
 
   /**
    * Retrieves a list of all authors.
-   * @return a ResponseEntity containing a map of "Authors": [list of GetAuthorSummaryResponse]
+   * The list will ALWAYS be sorted.
+   *
+   * @param attributeString attribute to sort by (id, name); case-insensitive
+   *                        id: Author ID (default)
+   *                        name: Author's name
+   * @param orderString     sorting order (asc, dsc); case-insensitive
+   *                        asc: ascending (default)
+   *                        dsc: descending
+   * @return a ResponseEntity containing the GetAuthorsResponse
    */
   @GetMapping("/")
   public ResponseEntity<GetAuthorsResponse> getAuthorsList(
-      // param
+      @RequestParam(value = "sort_by", required = false) String attributeString,
+      @RequestParam(value = "order", required = false) String orderString
   ) {
-    GetAuthorsResponse response = authorService.getAuthorsList();
+    AuthorSortBy attribute = IEnum.byString(AuthorSortBy.class, attributeString, "Invalid sort_by attribute");
+    Order order = IEnum.byString(Order.class, orderString, "Invalid order");
+    GetAuthorsResponse response = authorService.getAuthorsList(attribute, order);
     return ResponseEntity.ok(response);
   }
 

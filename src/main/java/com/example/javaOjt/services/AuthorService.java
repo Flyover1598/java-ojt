@@ -1,14 +1,17 @@
 package com.example.javaOjt.services;
 
-import com.example.javaOjt.beans.responses.author.GetAuthorsResponse;
-import java.util.List;
-import java.util.Optional;
 import com.example.javaOjt.beans.dtos.AuthorWithBookDTO;
 import com.example.javaOjt.beans.entities.Author;
 import com.example.javaOjt.beans.entities.AuthorPK;
 import com.example.javaOjt.beans.responses.author.GetAuthorResponse;
+import com.example.javaOjt.beans.responses.author.GetAuthorsResponse;
+import com.example.javaOjt.enums.AuthorSortBy;
+import com.example.javaOjt.enums.Order;
 import com.example.javaOjt.repositories.AuthorRepository;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -59,10 +62,16 @@ public class AuthorService {
   }
 
   /**
-   * Fetches the complete list of authors.
+
+   * Fetches the list of authors and sort if needed.
+   *
+   * @param attribute the attribute to sort by (id, name)
+   * @param order the order to sort by (asc, dsc)
+   * @return GetAuthorsResponse containing the list of authors
    */
-  public GetAuthorsResponse getAuthorsList() { // Should return an empty list on empty DB
-    return new GetAuthorsResponse(authorRepository.findAll());
+  public GetAuthorsResponse getAuthorsList(@Nullable AuthorSortBy attribute, @Nullable Order order) { // Should return an empty list on empty DB
+    attribute = (attribute == null) ? AuthorSortBy.ID : attribute;
+    return new GetAuthorsResponse(authorRepository.getAuthorsList(attribute, order));
   }
 
 }
