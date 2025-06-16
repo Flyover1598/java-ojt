@@ -4,12 +4,14 @@ import com.example.javaOjt.beans.dtos.AuthorWithBookDTO;
 import com.example.javaOjt.beans.entities.Author;
 import com.example.javaOjt.beans.entities.QAuthor;
 import com.example.javaOjt.beans.entities.QBook;
+import com.example.javaOjt.enums.AuthorSortBy;
+import com.example.javaOjt.enums.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.lang.Nullable;
 
 // @Repository
 @RequiredArgsConstructor
@@ -32,16 +34,14 @@ public class AuthorDaoImpl implements AuthorDao {
       .fetch();
   }
 
-  @PersistenceContext
-  private EntityManager entityManager;
-  public List<Author> authorsList(String attribute, String order) {
 
-//    Native SQLだとどうしてもuncheckedになるのでSuppressする（か、DTO書く？）
-//    String sqlQuery = "SELECT * FROM Authors ORDER BY " + attribute + " " + order;
-//    return entityManager.createNativeQuery(sqlQuery, Author.class).getResultList();
-
-//    JPQL触ったことがないので今回はJPQLで書いてみたけど注文多いわこの方言
-    String jpqlQuery = "SELECT a FROM Author a ORDER BY a." + attribute.toLowerCase() + " " + order;
-    return entityManager.createQuery(jpqlQuery, Author.class).getResultList();
+  public List<Author> getAuthorsList(AuthorSortBy attribute, @Nullable Order order) {
+    OrderSpecifier<?> orderSpecifier = switch (attribute) {
+      case AuthorSortBy.NAME -> (order == Order.DSC) ? QAuthor.author.name.desc() : QAuthor.author.name.asc();
+      case AuthorSortBy.ID -> (order == Order.DSC) ? QAuthor.author.id.desc() : QAuthor.author.id.asc();
+    };
+    return jpaQueryFactory.selectFrom(QAuthor.author)
+        .orderBy(orderSpecifier)
+        .fetch();
   }
 }

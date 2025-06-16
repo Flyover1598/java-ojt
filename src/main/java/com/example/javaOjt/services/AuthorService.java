@@ -70,31 +70,8 @@ public class AuthorService {
    * @return GetAuthorsResponse containing the list of authors
    */
   public GetAuthorsResponse getAuthorsList(@Nullable AuthorSortBy attribute, @Nullable Order order) { // Should return an empty list on empty DB
-    String attributeString = (attribute == null) ? "id" : attribute.toString();
-    String orderString = (order == Order.DSC) ? "desc" : "asc";
-    GetAuthorsResponse response = new GetAuthorsResponse(authorRepository.authorsList(attributeString, orderString));
-/*    GetAuthorsResponse response = new GetAuthorsResponse(authorRepository.findAll());
-    if (attribute == null && order == null) return response;
-    if (attribute == null) attribute = AuthorSortBy.ID;
-    switch (attribute) { // 今はnameとidしかないから一つのswitchで完結、めちゃくちゃ増えたらまずcomparator決めるかも
-      case AuthorSortBy.NAME -> {
-        Comparator<String> stringComparator = (order == Order.DSC)
-            ? Comparator.reverseOrder()
-            : Comparator.naturalOrder(); // Orderはascとdsc以外ありえないと思う
-        response.getAuthorsSummaryList().sort(
-            Comparator.comparing(AuthorInfo::name, stringComparator)
-        );
-      }
-      case AuthorSortBy.ID -> {
-        Comparator<Integer> intComparator = (order == Order.DSC)
-            ? Comparator.reverseOrder()
-            : Comparator.naturalOrder();
-        response.getAuthorsSummaryList().sort(
-            Comparator.comparing(AuthorInfo::id, intComparator)
-        );
-      }
-    }*/
-    return response;
+    attribute = (attribute == null) ? AuthorSortBy.ID : attribute;
+    return new GetAuthorsResponse(authorRepository.getAuthorsList(attribute, order));
   }
 
 }
