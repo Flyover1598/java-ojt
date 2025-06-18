@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/authors/")
+@RequestMapping("/authors")
 @RequiredArgsConstructor
 @Validated
 public class AuthorController {
@@ -26,26 +26,24 @@ public class AuthorController {
   private final AuthorService authorService;
 
   /**
-   * Retrieves a list of all authors.
-   * The list will ALWAYS be sorted.
+   * Retrieves a list of all authors. The list will ALWAYS be sorted.
    *
-   * @param attributeString attribute to sort by (id, name); case-insensitive
-   *                        id: Author ID (default)
-   *                        name: Author's name
-   * @param orderString     sorting order (asc, dsc); case-insensitive
-   *                        asc: ascending (default)
-   *                        dsc: descending
-   * @param ids             list of integers delimited by comma
-   *                        returns empty response for unexistent ids
+   * @param attributeString attribute to sort by (id, name); case-insensitive id: Author ID
+   *                        (default) name: Author's name
+   * @param orderString     sorting order (asc, dsc); case-insensitive asc: ascending (default) dsc:
+   *                        descending
+   * @param ids             list of integers delimited by comma returns empty response for
+   *                        unexistent ids
    * @return a ResponseEntity containing the GetAuthorsResponse
    */
-  @GetMapping("/")
+  @GetMapping("")
   public ResponseEntity<GetAuthorsResponse> getAuthorsList(
       @RequestParam(value = "sort_by", required = false) String attributeString,
       @RequestParam(value = "order", required = false) String orderString,
       @RequestParam(value = "ids", required = false) List<Integer> ids
   ) {
-    AuthorSortBy attribute = IEnum.byString(AuthorSortBy.class, attributeString, "Invalid sort_by attribute");
+    AuthorSortBy attribute = IEnum.byString(AuthorSortBy.class, attributeString,
+        "Invalid sort_by attribute");
     Order order = IEnum.byString(Order.class, orderString, "Invalid order");
     GetAuthorsResponse response = authorService.getAuthorsList(attribute, order, ids);
     return ResponseEntity.ok(response);
@@ -61,8 +59,8 @@ public class AuthorController {
    */
   @GetMapping("/{id}")
   public ResponseEntity<GetAuthorResponse> getAuthor(
-    @PathVariable(value = "id") Integer id,
-    @RequestParam(value = "withBooks", required = false) boolean withBooks
+      @PathVariable(value = "id") Integer id,
+      @RequestParam(value = "withBooks", required = false) boolean withBooks
   ) {
     GetAuthorResponse response = authorService.getAuthorById(id, withBooks);
     if (!response.isExists()) {
