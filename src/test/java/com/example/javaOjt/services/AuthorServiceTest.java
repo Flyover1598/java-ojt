@@ -123,7 +123,7 @@ class AuthorServiceTest {
   }
 
   @Test
-  void getAuthorsResponse_nonexistentId() {
+  void getAuthorsResponse_invalidId() {
     int targetId = 2147483647;
 
     // Mocking the Authors response
