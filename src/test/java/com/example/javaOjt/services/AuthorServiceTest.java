@@ -85,12 +85,19 @@ class AuthorServiceTest {
   void getAuthorsResponse_noParams() {
     // Mocking the Authors response
     List<Author> mockAuthors = List.of(new Author());
+    mockAuthors.get(0).setId(1);
+    mockAuthors.get(0).setName("Test Author1");
     Mockito.when(authorRepository.getAuthorsList(AuthorSortBy.ID, null, null))
         .thenReturn(mockAuthors);
     // Call the service method
     GetAuthorsResponse response = authorService.getAuthorsList(null, null, null);
     // Assertions to verify the response
     Assertions.assertNotNull(response);
+    Assertions.assertEquals(mockAuthors.size(), response.getAuthorsSummaryList().size());
+    Assertions.assertEquals(mockAuthors.getFirst().getId(),
+        response.getAuthorsSummaryList().getFirst().id());
+    Assertions.assertEquals(mockAuthors.getFirst().getName(),
+        response.getAuthorsSummaryList().getFirst().name());
     Mockito.verify(authorRepository, Mockito.times(1)).getAuthorsList(AuthorSortBy.ID, null, null);
   }
 
@@ -138,7 +145,7 @@ class AuthorServiceTest {
 
     // Assertions to verify the response
     Assertions.assertNotNull(response);
-    Assertions.assertEquals(mockAuthors, response.getAuthorsSummaryList());
+    Assertions.assertEquals(0, response.getAuthorsSummaryList().size());
     Mockito.verify(authorRepository, Mockito.times(1))
         .getAuthorsList(AuthorSortBy.ID, null, List.of(targetId));
   }
