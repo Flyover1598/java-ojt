@@ -5,11 +5,13 @@ import com.example.javaOjt.beans.entities.Author;
 import com.example.javaOjt.enums.AuthorSortBy;
 import com.example.javaOjt.enums.Order;
 import java.util.List;
+import org.springframework.lang.Nullable;
 
 public interface AuthorDao {
 
   List<AuthorWithBookDTO> getAuthorWithBookDTOsById(Integer id);
 
-  List<Author> getAuthorsList(AuthorSortBy attribute, Order order, List<Integer> ids);
+  List<Author> getAuthorsList(AuthorSortBy attribute, @Nullable Order order,
+      @Nullable List<Integer> ids);
 
 }

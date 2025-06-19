@@ -41,12 +41,12 @@ public class AuthorService {
       response.setId(beans.getFirst().author().getId());
       response.setName(beans.getFirst().author().getName());
       response.setBooks(beans.stream().map(
-          bean -> new GetAuthorResponse.Book(
-            bean.book().getId(),
-            bean.book().getTitle(),
-            bean.book().getPublishedAt() == null ? null : bean.book().getPublishedAt().toString()
-          )
-        ).toList()
+              bean -> new GetAuthorResponse.Book(
+                  bean.book().getId(),
+                  bean.book().getTitle(),
+                  bean.book().getPublishedAt() == null ? null : bean.book().getPublishedAt().toString()
+              )
+          ).toList()
       );
     }
     // If withBooks is false, fetch only the author details
@@ -69,7 +69,8 @@ public class AuthorService {
    * @param ids       the list of author IDs to filter by; if null, all authors are returned
    * @return GetAuthorsResponse containing the list of authors
    */
-  public GetAuthorsResponse getAuthorsList(@Nullable AuthorSortBy attribute, @Nullable Order order, List<Integer> ids) { // Should return an empty list on empty DB
+  public GetAuthorsResponse getAuthorsList(@Nullable AuthorSortBy attribute, @Nullable Order order,
+      @Nullable List<Integer> ids) { // Should return an empty list on empty DB
     attribute = (attribute == null) ? AuthorSortBy.ID : attribute;
     return new GetAuthorsResponse(authorRepository.getAuthorsList(attribute, order, ids));
   }

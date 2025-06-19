@@ -18,27 +18,28 @@ import org.springframework.lang.Nullable;
 // @Repository
 @RequiredArgsConstructor
 public class AuthorDaoImpl implements AuthorDao {
-// https://docs.spring.io/spring-data/jpa/reference/repositories/custom-implementations.html
+
+  // https://docs.spring.io/spring-data/jpa/reference/repositories/custom-implementations.html
   private final JPAQueryFactory jpaQueryFactory;
 
   public List<AuthorWithBookDTO> getAuthorWithBookDTOsById(Integer id) {
     return jpaQueryFactory.select(
-        Projections.constructor(
-          AuthorWithBookDTO.class,
-          QAuthor.author,
-          QBook.book
+            Projections.constructor(
+                AuthorWithBookDTO.class,
+                QAuthor.author,
+                QBook.book
+            )
         )
-      )
-      .from(QAuthor.author)
-      .leftJoin(QBook.book)
-      .on(QAuthor.author.id.eq(QBook.book.authorId))
-      .where(QAuthor.author.id.eq(id))
-      .fetch();
+        .from(QAuthor.author)
+        .leftJoin(QBook.book)
+        .on(QAuthor.author.id.eq(QBook.book.authorId))
+        .where(QAuthor.author.id.eq(id))
+        .fetch();
   }
 
 
   public List<Author> getAuthorsList(AuthorSortBy attribute, @Nullable Order order,
-      List<Integer> ids) {
+      @Nullable List<Integer> ids) {
     OrderSpecifier<?> orderSpecifier = switch (attribute) {
       case AuthorSortBy.NAME ->
           (order == Order.DSC) ? QAuthor.author.name.desc() : QAuthor.author.name.asc();
@@ -46,8 +47,9 @@ public class AuthorDaoImpl implements AuthorDao {
           (order == Order.DSC) ? QAuthor.author.id.desc() : QAuthor.author.id.asc();
     };
     List<Predicate> predicates = new ArrayList<>();
-    if (ids != null)
+    if (ids != null) {
       predicates.add(QAuthor.author.id.in(ids));
+    }
     return jpaQueryFactory.selectFrom(QAuthor.author)
         .where(predicates.toArray(new Predicate[0]))
         .orderBy(orderSpecifier)
