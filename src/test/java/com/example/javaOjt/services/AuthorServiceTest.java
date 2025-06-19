@@ -1,13 +1,16 @@
 package com.example.javaOjt.services;
 
-import java.util.List;
-import java.util.Optional;
 import com.example.javaOjt.beans.dtos.AuthorWithBookDTO;
 import com.example.javaOjt.beans.entities.Author;
 import com.example.javaOjt.beans.entities.AuthorPK;
 import com.example.javaOjt.beans.entities.Book;
 import com.example.javaOjt.beans.responses.author.GetAuthorResponse;
+import com.example.javaOjt.beans.responses.author.GetAuthorsResponse;
+import com.example.javaOjt.enums.AuthorSortBy;
 import com.example.javaOjt.repositories.AuthorRepository;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,7 +46,7 @@ class AuthorServiceTest {
 
     AuthorWithBookDTO mockBean = new AuthorWithBookDTO(mockAuthor, mockBook);
     Mockito.when(authorRepository.getAuthorWithBookDTOsById(targetId))
-      .thenReturn(List.of(mockBean));
+        .thenReturn(List.of(mockBean));
 
     // Call the service method
     GetAuthorResponse response = authorService.getAuthorById(targetId, true);
@@ -76,5 +79,67 @@ class AuthorServiceTest {
     Assertions.assertTrue(response.isExists());
     Mockito.verify(authorRepository, Mockito.never()).getAuthorWithBookDTOsById(targetId);
     Mockito.verify(authorRepository, Mockito.times(1)).findById(Mockito.any());
+  }
+
+  @Test
+  void getAuthorsResponse_noParams() {
+    // Mocking the Authors response
+    List<Author> mockAuthors = List.of(new Author());
+    Mockito.when(authorRepository.getAuthorsList(AuthorSortBy.ID, null, null))
+        .thenReturn(mockAuthors);
+    // Call the service method
+    GetAuthorsResponse response = authorService.getAuthorsList(null, null, null);
+    // Assertions to verify the response
+    Assertions.assertNotNull(response);
+    Mockito.verify(authorRepository, Mockito.times(1)).getAuthorsList(AuthorSortBy.ID, null, null);
+  }
+
+  @Test
+  void getAuthorsResponse_ids() {
+    int targetId1 = 1;
+    int targetId2 = 2;
+
+    // Mocking the Authors response
+    List<Author> mockAuthors = List.of(new Author(), new Author());
+    mockAuthors.get(0).setId(targetId1);
+    mockAuthors.get(1).setId(targetId2);
+    Mockito.when(
+            authorRepository.getAuthorsList(AuthorSortBy.ID, null, List.of(targetId1, targetId2)))
+        .thenReturn(mockAuthors);
+
+    // Call the service method
+    GetAuthorsResponse response = authorService.getAuthorsList(null, null,
+        List.of(targetId1, targetId2));
+
+    // Assertions to verify the response
+    Assertions.assertNotNull(response);
+    Assertions.assertEquals(mockAuthors.size(), response.getAuthorsSummaryList().size());
+    Assertions.assertEquals(mockAuthors.get(0).getId(),
+        response.getAuthorsSummaryList().get(0).id());
+    Assertions.assertEquals(mockAuthors.get(1).getId(),
+        response.getAuthorsSummaryList().get(1).id());
+    Mockito.verify(authorRepository, Mockito.times(1))
+        .getAuthorsList(AuthorSortBy.ID, null, List.of(targetId1, targetId2));
+  }
+
+  @Test
+  void getAuthorsResponse_nonexistentId() {
+    int targetId = 2147483647;
+
+    // Mocking the Authors response
+    List<Author> mockAuthors = new ArrayList<>();
+    Mockito.when(
+            authorRepository.getAuthorsList(AuthorSortBy.ID, null, List.of(targetId)))
+        .thenReturn(mockAuthors);
+
+    // Call the service method
+    GetAuthorsResponse response = authorService.getAuthorsList(null, null,
+        List.of(targetId));
+
+    // Assertions to verify the response
+    Assertions.assertNotNull(response);
+    Assertions.assertEquals(mockAuthors, response.getAuthorsSummaryList());
+    Mockito.verify(authorRepository, Mockito.times(1))
+        .getAuthorsList(AuthorSortBy.ID, null, List.of(targetId));
   }
 }
