@@ -14,25 +14,20 @@ import lombok.NonNull;
 @Data
 public class GetAuthorsResponse { // Authorを返すだけでも良い気がするが、Authorの構造が変わるとResponseも変わるのでこれを挟もうと思った
 
-  public record AuthorInfo( // 確かに著者情報ではなくこれをラップしたものが良い
-
-      @JsonProperty("id") Integer id,
-      @JsonProperty("name") String name
-  ) {}
-
   @JsonProperty("Authors") // JsonPropertyの存在を忘れてた（！？）
   private List<AuthorInfo> authorsSummaryList = new ArrayList<>();
-
-  public GetAuthorsResponse(@NonNull Iterable<Author> authorsList) {
-    authorsList.forEach(
-        author -> this.authorsSummaryList.add(new AuthorInfo(author.getId(), author.getName()))
-    );
-  }
 
   public GetAuthorsResponse(@NonNull List<Author> authorsList) {
     authorsList.forEach(
         author -> this.authorsSummaryList.add(new AuthorInfo(author.getId(), author.getName()))
     );
+  }
+
+  public record AuthorInfo( // 確かに著者情報ではなくこれをラップしたものが良い
+                            @JsonProperty("id") Integer id,
+                            @JsonProperty("name") String name
+  ) {
+
   }
 
 }

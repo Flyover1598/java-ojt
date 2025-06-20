@@ -1,7 +1,12 @@
 package com.example.javaOjt.controllers;
 
 import com.example.javaOjt.beans.responses.author.GetAuthorResponse;
+import com.example.javaOjt.beans.responses.author.GetAuthorsResponse;
+import com.example.javaOjt.enums.AuthorSortBy;
+import com.example.javaOjt.enums.Order;
+import com.example.javaOjt.exceptions.handlers.OjtExceptionHandler;
 import com.example.javaOjt.services.AuthorService;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -17,7 +22,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 @WebMvcTest(controllers = AuthorController.class)
 class AuthorControllerTest {
 
-  private static final String AUTHOR_BASE_URL = "/authors/";
+  private static final String AUTHOR_BASE_URL = "/authors";
 
   private MockMvc mockMvc;
 
@@ -29,7 +34,143 @@ class AuthorControllerTest {
 
   @BeforeEach
   public void setup() {
-    mockMvc = MockMvcBuilders.standaloneSetup(authorController).build();
+    mockMvc = MockMvcBuilders.standaloneSetup(authorController)
+        .setControllerAdvice(new OjtExceptionHandler()).build();
+  }
+
+  @Test
+  void getAuthorsList_noParams() throws Exception {
+    // Mocking the service response
+    GetAuthorsResponse mockResponse = new GetAuthorsResponse();
+    Mockito.when(authorService.getAuthorsList(null, null, null)).thenReturn(mockResponse);
+
+    // Perform the GET request
+    mockMvc.perform(
+            MockMvcRequestBuilders.get(AUTHOR_BASE_URL))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+        .andReturn();
+
+    // Verify that the service method was called correctly
+    Mockito.verify(authorService, Mockito.times(1)).getAuthorsList(null, null, null);
+  }
+
+  @Test
+  void getAuthorsList_attribute() throws Exception {
+    // Mocking the service response
+    GetAuthorsResponse mockResponse = new GetAuthorsResponse();
+    Mockito.when(authorService.getAuthorsList(AuthorSortBy.NAME, null, null))
+        .thenReturn(mockResponse);
+
+    // Perform the GET request
+    mockMvc.perform(
+            MockMvcRequestBuilders.get(AUTHOR_BASE_URL).param("sort_by", "name"))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+        .andReturn();
+
+    // Verify that the service method was called with the correct parameters
+    Mockito.verify(authorService, Mockito.times(1)).getAuthorsList(AuthorSortBy.NAME, null, null);
+  }
+
+  @Test
+  void getAuthorsList_order() throws Exception {
+    // Mocking the service response
+    GetAuthorsResponse mockResponse = new GetAuthorsResponse();
+    Mockito.when(authorService.getAuthorsList(null, Order.DSC, null))
+        .thenReturn(mockResponse);
+
+    // Perform the GET request
+    mockMvc.perform(
+            MockMvcRequestBuilders.get(AUTHOR_BASE_URL).param("order", "dsc"))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+        .andReturn();
+
+    // Verify that the service method was called with the correct parameters
+    Mockito.verify(authorService, Mockito.times(1)).getAuthorsList(null, Order.DSC, null);
+  }
+
+  @Test
+  void getAuthorsList_illegalAttribute() throws Exception {
+    // Perform the GET request
+    mockMvc.perform(
+            MockMvcRequestBuilders.get(AUTHOR_BASE_URL)
+                .param("sort_by", "v50"))
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andReturn();
+
+    // Verify that the service method was never called
+    Mockito.verify(authorService, Mockito.never())
+        .getAuthorsList(Mockito.any(AuthorSortBy.class), Mockito.any(Order.class),
+            Mockito.anyList());
+  }
+
+  @Test
+  void getAuthorsList_illegalOrder() throws Exception {
+    // Perform the GET request
+    mockMvc.perform(
+            MockMvcRequestBuilders.get(AUTHOR_BASE_URL)
+                .param("order", "kfc"))
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andReturn();
+
+    // Verify that the service method was never called
+    Mockito.verify(authorService, Mockito.never())
+        .getAuthorsList(Mockito.any(AuthorSortBy.class), Mockito.any(Order.class),
+            Mockito.anyList());
+  }
+
+  @Test
+  void getAuthorsList_ids() throws Exception {
+    List<Integer> targetIds = List.of(1, 2);
+    // Mocking the service response
+    GetAuthorsResponse mockResponse = new GetAuthorsResponse();
+    Mockito.when(authorService.getAuthorsList(null, null, targetIds))
+        .thenReturn(mockResponse);
+
+    // Perform the GET request
+    mockMvc.perform(
+            MockMvcRequestBuilders.get(AUTHOR_BASE_URL).param("ids", "1", "2"))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+        .andReturn();
+
+    // Verify that the service method was called with the correct parameters
+    Mockito.verify(authorService, Mockito.times(1)).getAuthorsList(null, null, targetIds);
+  }
+
+  @Test
+  void getAuthorsList_nonexistentID() throws Exception {
+    List<Integer> targetIds = List.of(Integer.MAX_VALUE);
+    // Mocking the service response
+    GetAuthorsResponse mockResponse = new GetAuthorsResponse();
+    Mockito.when(authorService.getAuthorsList(null, null, targetIds))
+        .thenReturn(mockResponse);
+
+    // Perform the GET request
+    mockMvc.perform(
+            MockMvcRequestBuilders.get(AUTHOR_BASE_URL).param("ids", "2147483647"))
+        .andExpect(MockMvcResultMatchers.status().isOk()) // should *not* return bad request
+        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+        .andReturn();
+
+    // Verify that the service method was called with the correct parameters
+    Mockito.verify(authorService, Mockito.times(1)).getAuthorsList(null, null, targetIds);
+  }
+
+  @Test
+  void getAuthorsList_illegalId() throws Exception {
+    // Perform the GET request
+    mockMvc.perform(
+            MockMvcRequestBuilders.get(AUTHOR_BASE_URL).param("ids", "a"))
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andReturn();
+
+    // Verify that the service method was called with the correct parameters
+    Mockito.verify(authorService, Mockito.never())
+        .getAuthorsList(Mockito.any(AuthorSortBy.class), Mockito.any(Order.class),
+            Mockito.anyList());
   }
 
   @Test
@@ -44,10 +185,10 @@ class AuthorControllerTest {
 
     // Perform the GET request
     mockMvc.perform(
-        MockMvcRequestBuilders.get(AUTHOR_BASE_URL + "{id}", targetId))
-      .andExpect(MockMvcResultMatchers.status().isOk())
-      .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-      .andReturn();
+            MockMvcRequestBuilders.get(AUTHOR_BASE_URL + "/{id}", targetId))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+        .andReturn();
 
     // Verify that the service method was called with the correct parameters
     Mockito.verify(authorService, Mockito.times(1)).getAuthorById(targetId, false);
@@ -65,11 +206,11 @@ class AuthorControllerTest {
 
     // Perform the GET request with the 'withBooks' parameter set to true
     mockMvc.perform(
-        MockMvcRequestBuilders.get(AUTHOR_BASE_URL + "{id}", targetId)
-          .param("withBooks", "true"))
-      .andExpect(MockMvcResultMatchers.status().isOk())
-      .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-      .andReturn();
+            MockMvcRequestBuilders.get(AUTHOR_BASE_URL + "/{id}", targetId)
+                .param("withBooks", "true"))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+        .andReturn();
 
     // Verify that the service method was called with the correct parameters
     Mockito.verify(authorService, Mockito.times(1)).getAuthorById(targetId, true);
@@ -87,11 +228,11 @@ class AuthorControllerTest {
 
     // Perform the GET request with the 'withBooks' parameter set to false
     mockMvc.perform(
-        MockMvcRequestBuilders.get(AUTHOR_BASE_URL + "{id}", targetId)
-          .param("withBooks", "false"))
-      .andExpect(MockMvcResultMatchers.status().isOk())
-      .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-      .andReturn();
+            MockMvcRequestBuilders.get(AUTHOR_BASE_URL + "/{id}", targetId)
+                .param("withBooks", "false"))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+        .andReturn();
 
     // Verify that the service method was called with the correct parameters
     Mockito.verify(authorService, Mockito.times(1)).getAuthorById(targetId, false);
@@ -101,13 +242,13 @@ class AuthorControllerTest {
   void getAuthor_invalidAuthorId() throws Exception {
     // Perform the GET request with an invalid author ID
     mockMvc.perform(
-        MockMvcRequestBuilders.get(AUTHOR_BASE_URL + "{id}", "aaaa"))
-      .andExpect(MockMvcResultMatchers.status().isBadRequest())
-      .andReturn();
+            MockMvcRequestBuilders.get(AUTHOR_BASE_URL + "/{id}", "aaaa"))
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andReturn();
 
     // Verify that the service method was never called
     Mockito.verify(authorService, Mockito.never())
-      .getAuthorById(Mockito.anyInt(), Mockito.anyBoolean());
+        .getAuthorById(Mockito.anyInt(), Mockito.anyBoolean());
   }
 
   @Test
@@ -115,13 +256,13 @@ class AuthorControllerTest {
     long targetId = 1;
     // Perform the GET request with an invalid 'withBooks' parameter
     mockMvc.perform(
-        MockMvcRequestBuilders.get(AUTHOR_BASE_URL + "{id}", targetId)
-          .param("withBooks", "invalid"))
-      .andExpect(MockMvcResultMatchers.status().isBadRequest())
-      .andReturn();
+            MockMvcRequestBuilders.get(AUTHOR_BASE_URL + "/{id}", targetId)
+                .param("withBooks", "invalid"))
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andReturn();
 
     // Verify that the service method was never called
     Mockito.verify(authorService, Mockito.never())
-      .getAuthorById(Mockito.anyInt(), Mockito.anyBoolean());
+        .getAuthorById(Mockito.anyInt(), Mockito.anyBoolean());
   }
 }
