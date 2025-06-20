@@ -100,7 +100,7 @@ class AuthorControllerTest {
         .andExpect(MockMvcResultMatchers.status().isBadRequest())
         .andReturn();
 
-    // Verify that the service method was called with the correct parameters
+    // Verify that the service method was never called
     Mockito.verify(authorService, Mockito.never())
         .getAuthorsList(Mockito.any(AuthorSortBy.class), Mockito.any(Order.class),
             Mockito.anyList());
