@@ -3,10 +3,8 @@ package com.example.javaOjt.integrationTests;
 import com.example.javaOjt.DBTestBase;
 import com.example.javaOjt.beans.responses.author.GetAuthorResponse;
 import com.example.javaOjt.beans.responses.author.GetAuthorsResponse;
-import com.example.javaOjt.beans.responses.author.GetAuthorsResponse.AuthorInfo;
 import com.example.javaOjt.beans.responses.common.OjtExceptionResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.ArrayList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -204,13 +202,13 @@ class AuthorIntegrationTest extends DBTestBase {
         .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
         .andReturn();
 
-    // Parse the error response
+    // Parse the response to GetAuthorsResponse object
     GetAuthorsResponse resultEmptyList = objectMapper.readValue(
         result.getResponse().getContentAsString(), GetAuthorsResponse.class);
 
-    // Assertions to verify the error response
+    // Assertions to verify that the result is empty
     Assertions.assertNotNull(resultEmptyList);
-    Assertions.assertEquals(new ArrayList<AuthorInfo>(), resultEmptyList.getAuthorsSummaryList());
+    Assertions.assertTrue(resultEmptyList.getAuthorsSummaryList().isEmpty());
   }
 
 }

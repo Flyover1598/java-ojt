@@ -54,6 +54,6 @@ class AuthorDaoImplTest extends DBTestBase {
     Assertions.assertEquals(2, result.getFirst().getId());
     Assertions.assertEquals("J. K. Rowling", result.getLast().getName());
     Assertions.assertEquals("夏目漱石", result.getFirst().getName());
-    // Kinda problematic in that ID, ASC produces the same result. Ah well
+
   }
 }

@@ -141,8 +141,8 @@ class AuthorControllerTest {
   }
 
   @Test
-  void getAuthorsList_invalidId() throws Exception {
-    List<Integer> targetIds = List.of(2147483647);
+  void getAuthorsList_nonexistentID() throws Exception {
+    List<Integer> targetIds = List.of(Integer.MAX_VALUE);
     // Mocking the service response
     GetAuthorsResponse mockResponse = new GetAuthorsResponse();
     Mockito.when(authorService.getAuthorsList(null, null, targetIds))

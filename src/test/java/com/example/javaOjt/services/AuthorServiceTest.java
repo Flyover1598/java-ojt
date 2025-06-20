@@ -7,8 +7,8 @@ import com.example.javaOjt.beans.entities.Book;
 import com.example.javaOjt.beans.responses.author.GetAuthorResponse;
 import com.example.javaOjt.beans.responses.author.GetAuthorsResponse;
 import com.example.javaOjt.enums.AuthorSortBy;
+import com.example.javaOjt.enums.Order;
 import com.example.javaOjt.repositories.AuthorRepository;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
@@ -110,12 +110,15 @@ class AuthorServiceTest {
     List<Author> mockAuthors = List.of(new Author(), new Author());
     mockAuthors.get(0).setId(targetId1);
     mockAuthors.get(1).setId(targetId2);
+    mockAuthors.get(0).setName("Author B");
+    mockAuthors.get(1).setName("Author A");
     Mockito.when(
-            authorRepository.getAuthorsList(AuthorSortBy.ID, null, List.of(targetId1, targetId2)))
+            authorRepository.getAuthorsList(AuthorSortBy.NAME, Order.DSC,
+                List.of(targetId1, targetId2)))
         .thenReturn(mockAuthors);
 
     // Call the service method
-    GetAuthorsResponse response = authorService.getAuthorsList(null, null,
+    GetAuthorsResponse response = authorService.getAuthorsList(AuthorSortBy.NAME, Order.DSC,
         List.of(targetId1, targetId2));
 
     // Assertions to verify the response
@@ -125,28 +128,12 @@ class AuthorServiceTest {
         response.getAuthorsSummaryList().get(0).id());
     Assertions.assertEquals(mockAuthors.get(1).getId(),
         response.getAuthorsSummaryList().get(1).id());
+    Assertions.assertEquals(mockAuthors.get(0).getName(),
+        response.getAuthorsSummaryList().get(0).name());
+    Assertions.assertEquals(mockAuthors.get(1).getName(),
+        response.getAuthorsSummaryList().get(1).name());
     Mockito.verify(authorRepository, Mockito.times(1))
-        .getAuthorsList(AuthorSortBy.ID, null, List.of(targetId1, targetId2));
+        .getAuthorsList(AuthorSortBy.NAME, Order.DSC, List.of(targetId1, targetId2));
   }
 
-  @Test
-  void getAuthorsResponse_invalidId() {
-    int targetId = 2147483647;
-
-    // Mocking the Authors response
-    List<Author> mockAuthors = new ArrayList<>();
-    Mockito.when(
-            authorRepository.getAuthorsList(AuthorSortBy.ID, null, List.of(targetId)))
-        .thenReturn(mockAuthors);
-
-    // Call the service method
-    GetAuthorsResponse response = authorService.getAuthorsList(null, null,
-        List.of(targetId));
-
-    // Assertions to verify the response
-    Assertions.assertNotNull(response);
-    Assertions.assertEquals(0, response.getAuthorsSummaryList().size());
-    Mockito.verify(authorRepository, Mockito.times(1))
-        .getAuthorsList(AuthorSortBy.ID, null, List.of(targetId));
-  }
 }
