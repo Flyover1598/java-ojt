@@ -102,7 +102,7 @@ class AuthorServiceTest {
   }
 
   @Test
-  void getAuthorsResponse_ids() {
+  void getAuthorsResponse_allParams() {
     int targetId1 = 1;
     int targetId2 = 2;
 
