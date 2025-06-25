@@ -75,4 +75,10 @@ public class AuthorService {
     return new GetAuthorsResponse(authorRepository.getAuthorsList(attribute, order, ids));
   }
 
+  public Author putAuthor(String name) {
+    Author newAuthor = new Author();
+    newAuthor.setName(name);
+    return authorRepository.save(newAuthor);
+  }
+
 }
