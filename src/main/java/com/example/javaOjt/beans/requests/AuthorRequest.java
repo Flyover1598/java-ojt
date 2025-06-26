@@ -16,5 +16,5 @@ public class AuthorRequest {
 
   @NotBlank
   @JsonProperty("name")
-  String name;
+  private String name;
 }
