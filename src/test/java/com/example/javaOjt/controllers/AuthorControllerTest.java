@@ -275,21 +275,19 @@ class AuthorControllerTest {
     savedAuthor.setName("三島由紀夫");
 
     // Mocking the service response
-    Mockito.when(authorService.putAuthor(Mockito.any(String.class))).thenReturn(savedAuthor);
+    Mockito.when(authorService.postAuthor(Mockito.any(String.class))).thenReturn(savedAuthor);
 
     // Perform the POST request with the POST request body
     mockMvc.perform(
             MockMvcRequestBuilders.post(AUTHOR_BASE_URL).contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
         .andExpect(MockMvcResultMatchers.status().isCreated())
-        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(
-            MockMvcResultMatchers.jsonPath("$.id").value(1))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("三島由紀夫"))
+        .andExpect(MockMvcResultMatchers.header().string("Location", "/authors/1"))
+        .andExpect(MockMvcResultMatchers.content().string(""))
         .andReturn();
 
     // Verify that the service method was called with the correct parameters
-    Mockito.verify(authorService, Mockito.times(1)).putAuthor("三島由紀夫");
+    Mockito.verify(authorService, Mockito.times(1)).postAuthor("三島由紀夫");
   }
 
   @Test
@@ -303,7 +301,7 @@ class AuthorControllerTest {
     ).andExpect(MockMvcResultMatchers.status().isBadRequest()).andReturn();
 
     // Verify that the service method was never called
-    Mockito.verify(authorService, Mockito.never()).putAuthor(Mockito.any(String.class));
+    Mockito.verify(authorService, Mockito.never()).postAuthor(Mockito.any(String.class));
   }
 
   @Test
@@ -317,7 +315,7 @@ class AuthorControllerTest {
     ).andExpect(MockMvcResultMatchers.status().isBadRequest()).andReturn();
 
     // Verify that the service method was never called
-    Mockito.verify(authorService, Mockito.never()).putAuthor(Mockito.any(String.class));
+    Mockito.verify(authorService, Mockito.never()).postAuthor(Mockito.any(String.class));
   }
 
   @Test
@@ -328,20 +326,18 @@ class AuthorControllerTest {
     savedAuthor.setName("三島由紀夫");
 
     // Mocking the service response
-    Mockito.when(authorService.putAuthor(Mockito.any(String.class))).thenReturn(savedAuthor);
+    Mockito.when(authorService.postAuthor(Mockito.any(String.class))).thenReturn(savedAuthor);
 
     // Perform the POST request with the POST request body
     mockMvc.perform(
             MockMvcRequestBuilders.post(AUTHOR_BASE_URL).contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
         .andExpect(MockMvcResultMatchers.status().isCreated())
-        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(
-            MockMvcResultMatchers.jsonPath("$.id").value(1))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("三島由紀夫"))
+        .andExpect(MockMvcResultMatchers.header().string("Location", "/authors/1"))
+        .andExpect(MockMvcResultMatchers.content().string(""))
         .andReturn();
 
     // Verify that the service method was called with the correct parameters
-    Mockito.verify(authorService, Mockito.times(1)).putAuthor("三島由紀夫");
+    Mockito.verify(authorService, Mockito.times(1)).postAuthor("三島由紀夫");
   }
 }

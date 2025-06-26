@@ -75,7 +75,13 @@ public class AuthorService {
     return new GetAuthorsResponse(authorRepository.getAuthorsList(attribute, order, ids));
   }
 
-  public Author putAuthor(String name) {
+  /**
+   * Saves a new author to the DB with the given String as the name.
+   *
+   * @param name the name of the author to be added
+   * @return the Author that is saved to the DB
+   */
+  public Author postAuthor(String name) {
     Author newAuthor = new Author();
     newAuthor.setName(name);
     return authorRepository.save(newAuthor);

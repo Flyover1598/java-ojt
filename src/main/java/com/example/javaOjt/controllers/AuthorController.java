@@ -74,12 +74,18 @@ public class AuthorController {
     return ResponseEntity.ok(response);
   }
 
+  /**
+   * Add a new author to the database by the author's name.
+   *
+   * @param requestBody JSON with the key "name". Any other value will be ignored.
+   * @return a ResponseEntity containing the URI to the added author in the headers.
+   */
   @PostMapping("")
   public ResponseEntity<Author> postAuthor(
       @RequestBody @Validated AuthorRequest requestBody
   ) {
-    Author savedAuthor = authorService.putAuthor(requestBody.getName());
-    return ResponseEntity.created(URI.create("/authors/" + savedAuthor.getId())).body(savedAuthor);
+    Author savedAuthor = authorService.postAuthor(requestBody.getName());
+    return ResponseEntity.created(URI.create("/authors/" + savedAuthor.getId())).body(null);
   }
 
 }

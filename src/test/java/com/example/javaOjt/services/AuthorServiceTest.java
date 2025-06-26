@@ -137,7 +137,7 @@ class AuthorServiceTest {
   }
 
   @Test
-  void putAuthor_new() { // エッジケースが思いつかない
+  void postAuthor_new() { // エッジケースが思いつかない
     String name = "三島由紀夫";
     Author savedAuthor = new Author();
     savedAuthor.setName(name);
@@ -147,7 +147,7 @@ class AuthorServiceTest {
     Mockito.when(authorRepository.save(Mockito.any(Author.class))).thenReturn(savedAuthor);
 
     // Call the service method
-    Author newAuthor = authorService.putAuthor(name);
+    Author newAuthor = authorService.postAuthor(name);
 
     // Assertions to verify the response
     Assertions.assertNotNull(newAuthor);
