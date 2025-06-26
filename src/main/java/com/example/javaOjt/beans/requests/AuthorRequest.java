@@ -15,5 +15,6 @@ import lombok.Setter;
 public class AuthorRequest {
 
   @NotBlank
+  @JsonProperty("name")
   String name;
 }
