@@ -147,11 +147,11 @@ class AuthorServiceTest {
     Mockito.when(authorRepository.save(Mockito.any(Author.class))).thenReturn(savedAuthor);
 
     // Call the service method
-    Author newAuthor = authorService.postAuthor(name);
+    GetAuthorResponse newAuthor = authorService.postAuthor(name);
 
     // Assertions to verify the response
     Assertions.assertNotNull(newAuthor);
-    Assertions.assertEquals(name, newAuthor.getName());
+    Assertions.assertEquals(savedAuthor.getName(), newAuthor.getName());
     Assertions.assertNotNull(newAuthor.getId());
   }
 

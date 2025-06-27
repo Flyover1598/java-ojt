@@ -275,7 +275,8 @@ class AuthorControllerTest {
     savedAuthor.setName("三島由紀夫");
 
     // Mocking the service response
-    Mockito.when(authorService.postAuthor(Mockito.any(String.class))).thenReturn(savedAuthor);
+    Mockito.when(authorService.postAuthor(Mockito.any(String.class)))
+        .thenReturn(new GetAuthorResponse(savedAuthor));
 
     // Perform the POST request with the POST request body
     mockMvc.perform(
@@ -326,7 +327,8 @@ class AuthorControllerTest {
     savedAuthor.setName("三島由紀夫");
 
     // Mocking the service response
-    Mockito.when(authorService.postAuthor(Mockito.any(String.class))).thenReturn(savedAuthor);
+    Mockito.when(authorService.postAuthor(Mockito.any(String.class)))
+        .thenReturn(new GetAuthorResponse(savedAuthor));
 
     // Perform the POST request with the POST request body
     mockMvc.perform(

@@ -1,6 +1,5 @@
 package com.example.javaOjt.controllers;
 
-import com.example.javaOjt.beans.entities.Author;
 import com.example.javaOjt.beans.requests.AuthorRequest;
 import com.example.javaOjt.beans.responses.author.GetAuthorResponse;
 import com.example.javaOjt.beans.responses.author.GetAuthorsResponse;
@@ -81,10 +80,10 @@ public class AuthorController {
    * @return a ResponseEntity containing the URI to the added author in the headers.
    */
   @PostMapping("")
-  public ResponseEntity<Author> postAuthor(
+  public ResponseEntity<GetAuthorResponse> postAuthor(
       @RequestBody @Validated AuthorRequest requestBody
   ) {
-    Author savedAuthor = authorService.postAuthor(requestBody.getName());
+    GetAuthorResponse savedAuthor = authorService.postAuthor(requestBody.getName());
     return ResponseEntity.created(URI.create("/authors/" + savedAuthor.getId())).body(null);
   }
 

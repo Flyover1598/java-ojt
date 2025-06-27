@@ -81,10 +81,10 @@ public class AuthorService {
    * @param name the name of the author to be added
    * @return the Author that is saved to the DB
    */
-  public Author postAuthor(String name) {
+  public GetAuthorResponse postAuthor(String name) {
     Author newAuthor = new Author();
     newAuthor.setName(name);
-    return authorRepository.save(newAuthor);
+    return new GetAuthorResponse(authorRepository.save(newAuthor));
   }
 
 }
