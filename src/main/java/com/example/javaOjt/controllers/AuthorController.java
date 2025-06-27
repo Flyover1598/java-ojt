@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -83,8 +84,20 @@ public class AuthorController {
   public ResponseEntity<GetAuthorResponse> postAuthor(
       @RequestBody @Validated AuthorRequest requestBody
   ) {
-    GetAuthorResponse savedAuthor = authorService.postAuthor(requestBody.getName());
-    return ResponseEntity.created(URI.create("/authors/" + savedAuthor.getId())).body(null);
+    GetAuthorResponse respon = authorService.postAuthor(requestBody.getName());
+    return ResponseEntity.created(URI.create("/authors/" + respon.getId())).body(null);
+  }
+
+  @PatchMapping("/{id}")
+  public ResponseEntity<GetAuthorResponse> patchAuthor(
+      @PathVariable(value = "id") Integer id,
+      @RequestBody @Validated AuthorRequest requestBody
+  ) {
+    GetAuthorResponse response = authorService.patchAuthor(id, requestBody.getName());
+    if (!response.isExists()) {
+      throw new OjtNotFoundException("Author not found with ID: " + id);
+    }
+    return ResponseEntity.noContent().build();
   }
 
 }

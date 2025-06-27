@@ -88,7 +88,8 @@ public class AuthorService {
   }
 
   public GetAuthorResponse patchAuthor(Integer id, String name) {
-    return null;
+    Optional<Author> author = authorRepository.findById(new AuthorPK(id));
+    return author.map(GetAuthorResponse::new).orElseGet(GetAuthorResponse::notFoundResponse);
   }
 
 }
