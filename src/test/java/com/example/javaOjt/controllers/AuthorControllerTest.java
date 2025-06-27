@@ -430,6 +430,10 @@ class AuthorControllerTest {
     int targetId = Integer.MAX_VALUE;
     String requestBody = "{\"name\": \"三島由紀夫\"}";
 
+    // Mocking the service response
+    Mockito.when(authorService.patchAuthor(targetId, "三島由紀夫"))
+        .thenReturn(GetAuthorResponse.notFoundResponse());
+
     // Perform the PATCH request and expect 404
     mockMvc.perform(MockMvcRequestBuilders.patch(AUTHOR_BASE_URL + "/" + targetId)
             .contentType(MediaType.APPLICATION_JSON).content(requestBody))
