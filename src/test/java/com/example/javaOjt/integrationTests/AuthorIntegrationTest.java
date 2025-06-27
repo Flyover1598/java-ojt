@@ -290,4 +290,58 @@ class AuthorIntegrationTest extends DBTestBase {
     Assertions.assertNotNull(author.getUpdatedTimestamp());
     Assertions.assertEquals(author.getCreatedTimestamp(), author.getUpdatedTimestamp());
   }
+
+  @Test
+  void updateAuthorTest() throws Exception {
+    String requestBody = "{\"name\": \"三島由紀夫\"}";
+    int targetId = 1;
+
+    // Perform the PATCH request to update an existing author
+    mockMvc.perform(
+            MockMvcRequestBuilders.patch(AUTHOR_BASE_URL + "/" + targetId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+        .andExpect(MockMvcResultMatchers.status().isNoContent())
+        .andReturn();
+
+    // Assertions to verify the author is updated
+    Author author = authorRepository.findById(new AuthorPK(targetId)).orElse(null);
+    Assertions.assertNotNull(author);
+    Assertions.assertEquals("三島由紀夫", author.getName());
+    Assertions.assertNotNull(author.getCreatedTimestamp());
+    Assertions.assertNotNull(author.getUpdatedTimestamp());
+    Assertions.assertNotEquals(author.getCreatedTimestamp(), author.getUpdatedTimestamp());
+  }
+
+  @Test
+  void updateAuthorTest_nonexistentId() throws Exception {
+    String requestBody = "{\"name\": \"三島由紀夫\"}";
+    int targetId = Integer.MAX_VALUE;
+
+    // Perform the PATCH request and expect 404
+    MvcResult result = mockMvc.perform(
+            MockMvcRequestBuilders.patch(AUTHOR_BASE_URL + "/" + targetId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+        .andExpect(MockMvcResultMatchers.status().isNotFound())
+        .andReturn();
+
+    // Parse the error response
+    OjtExceptionResponse resultErr = objectMapper.readValue(
+        result.getResponse().getContentAsString(),
+        OjtExceptionResponse.class);
+
+    // Assertions to verify the error response
+    Assertions.assertNotNull(resultErr);
+    Assertions.assertNotNull(resultErr.getError());
+    Assertions.assertEquals("Author not found with ID: " + targetId,
+        resultErr.getError().message());
+    Assertions.assertEquals(404, resultErr.getError().code());
+
+    // Assertions to verify the author was never created or updated
+    Author author = authorRepository.findById(new AuthorPK(targetId)).orElse(null);
+    Assertions.assertNull(author);
+  }
+
+  // emptyName and illegalId can be considered covered in AuthorControllerTest
 }
