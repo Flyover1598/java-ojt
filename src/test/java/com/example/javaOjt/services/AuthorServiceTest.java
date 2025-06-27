@@ -162,7 +162,9 @@ class AuthorServiceTest {
     toUpdateAuthor.setId(1);
 
     // Mocking the response
-    Mockito.when(authorRepository.save(toUpdateAuthor)).thenReturn(toUpdateAuthor);
+    Mockito.when(authorRepository.findById(new AuthorPK(1)))
+        .thenReturn(Optional.of(toUpdateAuthor));
+    Mockito.when(authorRepository.save(Mockito.any(Author.class))).thenReturn(toUpdateAuthor);
 
     // Call the service method
     GetAuthorResponse updatedAuthor = authorService.patchAuthor(toUpdateAuthor.getId(),
