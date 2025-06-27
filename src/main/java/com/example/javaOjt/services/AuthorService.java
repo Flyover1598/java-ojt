@@ -87,4 +87,8 @@ public class AuthorService {
     return new GetAuthorResponse(authorRepository.save(newAuthor));
   }
 
+  public GetAuthorResponse patchAuthor(Integer id, String name) {
+    return null;
+  }
+
 }
