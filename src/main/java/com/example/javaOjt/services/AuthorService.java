@@ -79,7 +79,7 @@ public class AuthorService {
    * Saves a new author to the DB with the given String as the name.
    *
    * @param name the name of the author to be added
-   * @return the Author that is saved to the DB
+   * @return GetAuthorResponse of the author that was saved to the DB
    */
   public GetAuthorResponse postAuthor(String name) {
     Author newAuthor = new Author();
@@ -87,6 +87,13 @@ public class AuthorService {
     return new GetAuthorResponse(authorRepository.save(newAuthor));
   }
 
+  /**
+   * Update the name of the author of the given id.
+   *
+   * @param id   the id of the author that is to be updated
+   * @param name new name of the author
+   * @return GetAuthorResponse of the author that was updated
+   */
   public GetAuthorResponse patchAuthor(Integer id, String name) {
     Optional<Author> author = authorRepository.findById(new AuthorPK(id));
     if (author.isEmpty()) {

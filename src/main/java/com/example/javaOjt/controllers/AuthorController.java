@@ -88,6 +88,14 @@ public class AuthorController {
     return ResponseEntity.created(URI.create("/authors/" + respon.getId())).body(null);
   }
 
+  /**
+   * Update an existing author's name by ID.
+   *
+   * @param id          the ID of the author to retrieve
+   * @param requestBody JSON with the key "name". Any other value will be ignored.
+   * @return 204 No Content on a successful update
+   * @throws OjtNotFoundException if the author does not exist
+   */
   @PatchMapping("/{id}")
   public ResponseEntity<GetAuthorResponse> patchAuthor(
       @PathVariable(value = "id") Integer id,
