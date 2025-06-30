@@ -10,9 +10,12 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.transaction.Transactional;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.lang.Nullable;
 
 // @Repository
@@ -55,8 +58,15 @@ public class AuthorDaoImpl implements AuthorDao {
         .fetch();
   }
 
+  @Modifying
+  @Transactional
   public void deleteByIdLogical(Author author) {
-
+    ZonedDateTime now = ZonedDateTime.now(); // Calculate the timestamp once
+    jpaQueryFactory.update(QAuthor.author)
+        .set(QAuthor.author.deletedTimestamp, now)
+        .set(QAuthor.author.updatedTimestamp, now) // Use the same timestamp for both fields
+        .where(QAuthor.author.id.eq(author.getId()))
+        .execute();
   }
 
 }
