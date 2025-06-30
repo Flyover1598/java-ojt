@@ -104,4 +104,8 @@ public class AuthorService {
     return new GetAuthorResponse(authorRepository.save(toUpdateAuthor));
   }
 
+  public GetAuthorResponse deleteAuthor(Integer id, Boolean permanent) {
+    return GetAuthorResponse.notFoundResponse();
+  }
+
 }

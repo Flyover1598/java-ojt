@@ -8,6 +8,7 @@ import com.example.javaOjt.beans.responses.author.GetAuthorsResponse;
 import com.example.javaOjt.beans.responses.common.OjtExceptionResponse;
 import com.example.javaOjt.repositories.AuthorRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.ZonedDateTime;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -344,4 +345,74 @@ class AuthorIntegrationTest extends DBTestBase {
   }
 
   // emptyName and illegalId can be considered covered in AuthorControllerTest
+
+  @Test
+  void deleteAuthorLogicalTest() throws Exception {
+    int targetId = 1;
+
+    // Perform the DELETE request and expect 204
+    mockMvc.perform(MockMvcRequestBuilders.delete(AUTHOR_BASE_URL + "/" + targetId)
+            .param("permanent", "false"))
+        .andExpect(MockMvcResultMatchers.status().isNoContent())
+        .andReturn();
+
+    // Assertions to verify that the author is deleted logically
+    Author authorFirst = authorRepository.findById(new AuthorPK(targetId)).orElse(null);
+    Assertions.assertNotNull(authorFirst);
+    ZonedDateTime firstDeletedTimestamp = authorFirst.getDeletedTimestamp();
+    Assertions.assertNotNull(firstDeletedTimestamp);
+    Assertions.assertEquals(firstDeletedTimestamp, authorFirst.getUpdatedTimestamp());
+
+    // Perform the DELETE request again and expect 204
+    mockMvc.perform(MockMvcRequestBuilders.delete(AUTHOR_BASE_URL + "/" + targetId))
+        // should default to permanent = false
+        .andExpect(MockMvcResultMatchers.status().isNoContent())
+        .andReturn();
+
+    // Assertions to verify that the deleted timestamp has not altered
+    Author authorSecond = authorRepository.findById(new AuthorPK(targetId)).orElse(null);
+    Assertions.assertNotNull(authorSecond);
+    Assertions.assertEquals(firstDeletedTimestamp, authorSecond.getDeletedTimestamp());
+    Assertions.assertEquals(firstDeletedTimestamp, authorSecond.getUpdatedTimestamp());
+  }
+
+  @Test
+  void deleteAuthorPhysicalTest() throws Exception {
+    int targetId = 1;
+
+    // Perform the DELETE request and expect 204
+    mockMvc.perform(MockMvcRequestBuilders.delete(AUTHOR_BASE_URL + "/" + targetId)
+            .param("permanent", "true"))
+        .andExpect(MockMvcResultMatchers.status().isNoContent())
+        .andReturn();
+
+    // Assertions to verify that the author is deleted physically
+    Author author = authorRepository.findById(new AuthorPK(targetId)).orElse(null);
+    Assertions.assertNull(author);
+  }
+
+  @Test
+  void deleteAuthor_nonExistentId() throws Exception {
+    int targetId = Integer.MIN_VALUE;
+
+    // Perform the DELETE request and expect 404
+    MvcResult result = mockMvc.perform(
+            MockMvcRequestBuilders.delete(AUTHOR_BASE_URL + "/" + targetId))
+        .andExpect(MockMvcResultMatchers.status().isNotFound())
+        .andReturn();
+
+    // Parse the error response
+    OjtExceptionResponse resultErr = objectMapper.readValue(
+        result.getResponse().getContentAsString(),
+        OjtExceptionResponse.class);
+
+    // Assertions to verify the error response
+    Assertions.assertNotNull(resultErr);
+    Assertions.assertNotNull(resultErr.getError());
+    Assertions.assertEquals("Author not found with ID: " + targetId,
+        resultErr.getError().message());
+    Assertions.assertEquals(404, resultErr.getError().code());
+  }
+
+  // illegalId and illegalBool can be considered covered in AuthorControllerTest
 }

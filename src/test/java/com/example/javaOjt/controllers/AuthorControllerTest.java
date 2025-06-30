@@ -458,4 +458,110 @@ class AuthorControllerTest {
     Mockito.verify(authorService, Mockito.never())
         .patchAuthor(Mockito.any(Integer.class), Mockito.any(String.class));
   }
+
+  /* deleteAuthor's Controller method takes param id, which should be int,
+   * and param permanent, which should be bool,
+   * checks the types, and returns 400 if incompatible.
+   * Otherwise, it calls the according service method,
+   * produces 404 on a notFoundResponse return, and 204 otherwise. */
+
+  @Test
+  void deleteAuthorLogical() throws Exception {
+    int targetId = 1;
+
+    // Mocking the service response
+    GetAuthorResponse mockResponse = new GetAuthorResponse();
+    mockResponse.setExists(true); // Assuming the response indicates the author exists
+    mockResponse.setId(targetId);
+    Mockito.when(authorService.deleteAuthor(targetId, false)).thenReturn(mockResponse);
+
+    // Perform the DELETE request to delete an existing author
+    mockMvc.perform(
+            MockMvcRequestBuilders.delete(AUTHOR_BASE_URL + "/" + targetId)
+                .param("deletePermanently", "false")
+        )
+        .andExpect(MockMvcResultMatchers.status().isNoContent())
+        .andReturn();
+
+    // Verify that the service method was called with the correct parameters
+    Mockito.verify(authorService, Mockito.times(1)).deleteAuthor(targetId, false);
+  }
+
+  @Test
+  void deleteAuthorPhysical() throws Exception {
+    int targetId = 1;
+
+    // Mocking the service response
+    GetAuthorResponse mockResponse = new GetAuthorResponse();
+    mockResponse.setExists(true); // Assuming the response indicates the author exists
+    mockResponse.setId(targetId);
+    Mockito.when(authorService.deleteAuthor(targetId, true)).thenReturn(mockResponse);
+
+    // Perform the DELETE request to delete an existing author
+    mockMvc.perform(
+            MockMvcRequestBuilders.delete(AUTHOR_BASE_URL + "/" + targetId)
+                .param("deletePermanently", "true")
+        )
+        .andExpect(MockMvcResultMatchers.status().isNoContent())
+        .andReturn();
+
+    // Verify that the service method was called with the correct parameters
+    Mockito.verify(authorService, Mockito.times(1)).deleteAuthor(targetId, true);
+  }
+
+  @Test
+  void deleteAuthor_illegalId() throws Exception {
+    // Perform the DELETE request and expect 400
+    mockMvc.perform(
+            MockMvcRequestBuilders.delete(AUTHOR_BASE_URL + "/" + "kfc")
+                .param("deletePermanently", "true")
+        )
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andReturn();
+
+    // Verify that the service method was never called
+    Mockito.verify(authorService, Mockito.never())
+        .deleteAuthor(Mockito.any(Integer.class), Mockito.any(Boolean.class));
+  }
+
+  @Test
+  void deleteAuthor_notBool() throws Exception {
+    int targetId = 1;
+
+    // Perform the DELETE request and expect 400
+    mockMvc.perform(
+            MockMvcRequestBuilders.delete(AUTHOR_BASE_URL + "/" + targetId)
+                .param("deletePermanently", "kfc")
+        )
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andReturn();
+
+    // Verify that the service method was never called
+    Mockito.verify(authorService, Mockito.never())
+        .deleteAuthor(Mockito.any(Integer.class), Mockito.any(Boolean.class));
+  }
+
+  @Test
+  void deleteAuthor_nonexistentId() throws Exception {
+    int targetId = Integer.MIN_VALUE;
+
+    // Mocking the service response
+    GetAuthorResponse mockResponse = new GetAuthorResponse();
+    mockResponse.setExists(false); // Assuming the response indicates the author exists
+    mockResponse.setId(targetId);
+    Mockito.when(authorService.deleteAuthor(targetId, false)).thenReturn(mockResponse);
+    // will test if the default is set to false as well
+
+    // Perform the DELETE request and expect 404
+    mockMvc.perform(
+            MockMvcRequestBuilders.delete(AUTHOR_BASE_URL + "/" + targetId)
+        )
+        .andExpect(MockMvcResultMatchers.status().isNotFound())
+        .andReturn();
+
+    // Verify that the service method was called
+    Mockito.verify(authorService, Mockito.times(1))
+        .deleteAuthor(targetId, false);
+  }
+
 }

@@ -14,4 +14,6 @@ public interface AuthorDao {
   List<Author> getAuthorsList(AuthorSortBy attribute, @Nullable Order order,
       @Nullable List<Integer> ids);
 
+  void deleteByIdLogical(Author author);
+
 }
