@@ -8,6 +8,8 @@ import com.example.javaOjt.beans.responses.author.GetAuthorsResponse;
 import com.example.javaOjt.beans.responses.common.OjtExceptionResponse;
 import com.example.javaOjt.repositories.AuthorRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import java.time.ZonedDateTime;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -32,6 +34,9 @@ class AuthorIntegrationTest extends DBTestBase {
 
   @Autowired
   private AuthorRepository authorRepository;
+
+  @Autowired
+  private EntityManager em;
 
   @Test
   void getAuthor_isExists() throws Exception {
@@ -377,6 +382,7 @@ class AuthorIntegrationTest extends DBTestBase {
   }
 
   @Test
+  @Transactional
   void deleteAuthorPhysicalTest() throws Exception {
     int targetId = 1;
 
@@ -387,8 +393,10 @@ class AuthorIntegrationTest extends DBTestBase {
         .andReturn();
 
     // Assertions to verify that the author is deleted physically
-    Author author = authorRepository.findById(new AuthorPK(targetId)).orElse(null);
-    Assertions.assertNull(author);
+    em.flush();
+    em.clear();
+    boolean exists = em.find(Author.class, new AuthorPK(targetId)) != null;
+    Assertions.assertFalse(exists);
   }
 
   @Test
