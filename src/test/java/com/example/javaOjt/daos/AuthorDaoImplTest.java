@@ -66,7 +66,7 @@ class AuthorDaoImplTest extends DBTestBase {
     Assertions.assertNull(author.getDeletedTimestamp());
 
     // Perform the logical delete
-    authorDaoImpl.deleteByIdLogical(author);
+    authorDaoImpl.deleteByIdLogical(targetId);
 
     // check deletedTimestamp
     Author updated = authorDaoImpl.getAuthorsList(AuthorSortBy.ID, Order.ASC, List.of(targetId))

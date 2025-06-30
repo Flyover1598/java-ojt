@@ -60,12 +60,23 @@ public class AuthorDaoImpl implements AuthorDao {
 
   @Modifying
   @Transactional
-  public void deleteByIdLogical(Author author) {
+  public void deleteByIdLogical(Integer id) {
     ZonedDateTime now = ZonedDateTime.now(); // Calculate the timestamp once
     jpaQueryFactory.update(QAuthor.author)
         .set(QAuthor.author.deletedTimestamp, now)
         .set(QAuthor.author.updatedTimestamp, now) // Use the same timestamp for both fields
-        .where(QAuthor.author.id.eq(author.getId()))
+        .where(QAuthor.author.id.eq(id))
+        .execute();
+  }
+
+  @Modifying
+  @Transactional
+  public void deleteByIdPhysical(Integer id) {
+    jpaQueryFactory.delete(QBook.book)
+        .where(QBook.book.authorId.eq(id))
+        .execute();
+    jpaQueryFactory.delete(QAuthor.author)
+        .where(QAuthor.author.id.eq(id))
         .execute();
   }
 

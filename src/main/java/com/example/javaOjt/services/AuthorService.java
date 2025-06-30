@@ -116,10 +116,10 @@ public class AuthorService {
     }
     GetAuthorResponse response = new GetAuthorResponse(toDeleteAuthor);
     if (permanent) {
-      authorRepository.deleteById(authorPK);
+      authorRepository.deleteByIdPhysical(id);
     } else {
       if (toDeleteAuthor.getDeletedTimestamp() == null) {
-        authorRepository.deleteByIdLogical(toDeleteAuthor);
+        authorRepository.deleteByIdLogical(id);
       }
     }
     return response;
