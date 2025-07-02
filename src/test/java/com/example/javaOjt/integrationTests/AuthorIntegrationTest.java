@@ -388,7 +388,7 @@ class AuthorIntegrationTest extends DBTestBase {
 
     // Perform the DELETE request and expect 204
     mockMvc.perform(MockMvcRequestBuilders.delete(AUTHOR_BASE_URL + "/" + targetId)
-            .param("permanent", "true"))
+            .param("deletePermanently", "true"))
         .andExpect(MockMvcResultMatchers.status().isNoContent())
         .andReturn();
 
