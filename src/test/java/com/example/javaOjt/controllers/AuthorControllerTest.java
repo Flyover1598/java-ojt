@@ -348,4 +348,120 @@ class AuthorControllerTest {
     // Verify that the service method was called with the correct parameters
     Mockito.verify(authorService, Mockito.times(1)).postAuthor("三島由紀夫");
   }
+
+  @Test
+  void updateAuthor() throws Exception {
+    String requestBody = "{\"name\": \"三島由紀夫\"}";
+    Author updatedAuthor = new Author();
+    updatedAuthor.setName("三島由紀夫");
+    updatedAuthor.setId(1);
+
+    // Mocking the service response
+    Mockito.when(authorService.patchAuthor(updatedAuthor.getId(), updatedAuthor.getName()))
+        .thenReturn(new GetAuthorResponse(updatedAuthor));
+
+    // Perform the PATCH request to update an existing author
+    mockMvc.perform(
+            MockMvcRequestBuilders.patch(AUTHOR_BASE_URL + "/" + updatedAuthor.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+        .andExpect(MockMvcResultMatchers.status().isNoContent())
+        .andReturn();
+
+    // Verify that the service method was called with the correct parameters
+    Mockito.verify(authorService, Mockito.times(1))
+        .patchAuthor(updatedAuthor.getId(), updatedAuthor.getName());
+  }
+
+  @Test
+  void updateAuthor_empty() throws Exception {
+    int targetId = 1;
+    String requestBody = "{\"name\": \"\"}";
+
+    // Perform the PATCH request and expect 400
+    mockMvc.perform(
+        MockMvcRequestBuilders.patch(AUTHOR_BASE_URL + "/" + targetId)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestBody)
+    ).andExpect(MockMvcResultMatchers.status().isBadRequest()).andReturn();
+
+    // Verify that the service method was never called
+    Mockito.verify(authorService, Mockito.never())
+        .patchAuthor(Mockito.any(Integer.class), Mockito.any(String.class));
+  }
+
+  @Test
+  void updateAuthor_illegalKey() throws Exception {
+    int targetId = 1;
+    String requestBody = "{\"kfc\": \"v50\"}";
+
+    // Perform the PATCH request and expect 400
+    mockMvc.perform(
+        MockMvcRequestBuilders.patch(AUTHOR_BASE_URL + "/" + targetId)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(requestBody)
+    ).andExpect(MockMvcResultMatchers.status().isBadRequest()).andReturn();
+
+    // Verify that the service method was never called
+    Mockito.verify(authorService, Mockito.never())
+        .patchAuthor(Mockito.any(Integer.class), Mockito.any(String.class));
+  }
+
+  @Test
+  void updateAuthor_nameAndIllegalKey() throws Exception {
+    String requestBody = "{\"name\": \"三島由紀夫\", \"kfc\": \"v50\"}";
+    Author updatedAuthor = new Author();
+    updatedAuthor.setName("三島由紀夫");
+    updatedAuthor.setId(1);
+
+    // Mocking the service response
+    Mockito.when(authorService.patchAuthor(updatedAuthor.getId(), updatedAuthor.getName()))
+        .thenReturn(new GetAuthorResponse(updatedAuthor));
+
+    // Perform the PATCH request to update an existing author
+    mockMvc.perform(
+            MockMvcRequestBuilders.patch(AUTHOR_BASE_URL + "/" + updatedAuthor.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+        .andExpect(MockMvcResultMatchers.status().isNoContent())
+        .andReturn();
+
+    // Verify that the service method was called with the correct parameters
+    Mockito.verify(authorService, Mockito.times(1))
+        .patchAuthor(updatedAuthor.getId(), updatedAuthor.getName());
+  }
+
+  @Test
+  void updateAuthor_nonexistentId() throws Exception {
+    int targetId = Integer.MAX_VALUE;
+    String requestBody = "{\"name\": \"三島由紀夫\"}";
+
+    // Mocking the service response
+    Mockito.when(authorService.patchAuthor(targetId, "三島由紀夫"))
+        .thenReturn(GetAuthorResponse.notFoundResponse());
+
+    // Perform the PATCH request and expect 404
+    mockMvc.perform(MockMvcRequestBuilders.patch(AUTHOR_BASE_URL + "/" + targetId)
+            .contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        .andExpect(MockMvcResultMatchers.status().isNotFound())
+        .andReturn();
+
+    // Verify that the service method was called with the correct parameters
+    Mockito.verify(authorService, Mockito.times(1)).patchAuthor(targetId, "三島由紀夫");
+  }
+
+  @Test
+  void updateAuthor_illegalId() throws Exception {
+    String requestBody = "{\"name\": \"三島由紀夫\"}";
+
+    // Perform the PATCH request and expect 400
+    mockMvc.perform(MockMvcRequestBuilders.patch(AUTHOR_BASE_URL + "/" + "kfc")
+            .contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andReturn();
+
+    // Verify that the service method was never called
+    Mockito.verify(authorService, Mockito.never())
+        .patchAuthor(Mockito.any(Integer.class), Mockito.any(String.class));
+  }
 }

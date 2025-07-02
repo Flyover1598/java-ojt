@@ -137,7 +137,7 @@ class AuthorServiceTest {
   }
 
   @Test
-  void postAuthor_new() { // エッジケースが思いつかない
+  void postAuthor() { // エッジケースが思いつかない
     String name = "三島由紀夫";
     Author savedAuthor = new Author();
     savedAuthor.setName(name);
@@ -153,6 +153,27 @@ class AuthorServiceTest {
     Assertions.assertNotNull(newAuthor);
     Assertions.assertEquals(savedAuthor.getName(), newAuthor.getName());
     Assertions.assertNotNull(newAuthor.getId());
+  }
+  
+  @Test
+  void patchAuthor() {
+    Author toUpdateAuthor = new Author();
+    toUpdateAuthor.setName("三島由紀夫");
+    toUpdateAuthor.setId(1);
+
+    // Mocking the response
+    Mockito.when(authorRepository.findById(new AuthorPK(1)))
+        .thenReturn(Optional.of(toUpdateAuthor));
+    Mockito.when(authorRepository.save(Mockito.any(Author.class))).thenReturn(toUpdateAuthor);
+
+    // Call the service method
+    GetAuthorResponse updatedAuthor = authorService.patchAuthor(toUpdateAuthor.getId(),
+        toUpdateAuthor.getName());
+
+    // Assertions to verify the response
+    Assertions.assertNotNull(updatedAuthor);
+    Assertions.assertEquals(toUpdateAuthor.getName(), updatedAuthor.getName());
+    Assertions.assertEquals(toUpdateAuthor.getId(), updatedAuthor.getId());
   }
 
 }
