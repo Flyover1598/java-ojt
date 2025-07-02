@@ -284,10 +284,10 @@ class AuthorControllerTest {
                 .content(requestBody))
         .andExpect(MockMvcResultMatchers.status().isCreated())
         .andExpect(MockMvcResultMatchers.header().string("Location", "/authors/1"))
-.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(
             MockMvcResultMatchers.jsonPath("$.id").value(1))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("三島由紀夫"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.Name").value("三島由紀夫"))
         .andReturn();
 
     // Verify that the service method was called with the correct parameters
@@ -341,7 +341,7 @@ class AuthorControllerTest {
         .andExpect(MockMvcResultMatchers.header().string("Location", "/authors/1"))
         .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("三島由紀夫"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.Name").value("三島由紀夫"))
 
         .andReturn();
 

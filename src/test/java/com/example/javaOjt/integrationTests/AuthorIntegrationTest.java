@@ -226,10 +226,10 @@ class AuthorIntegrationTest extends DBTestBase {
             MockMvcRequestBuilders.post(AUTHOR_BASE_URL).contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
         .andExpect(MockMvcResultMatchers.status().isCreated())
-.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(
-            MockMvcResultMatchers.jsonPath("$.id").value(1))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("三島由紀夫"))
+            MockMvcResultMatchers.jsonPath("$.id").value(5))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.Name").value("三島由紀夫"))
         .andExpect(MockMvcResultMatchers.header().string("Location", "/authors/5"))
         .andReturn();
 
@@ -283,8 +283,8 @@ class AuthorIntegrationTest extends DBTestBase {
         .andExpect(MockMvcResultMatchers.status().isCreated())
         .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(
-            MockMvcResultMatchers.jsonPath("$.id").value(1))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("三島由紀夫"))
+            MockMvcResultMatchers.jsonPath("$.id").value(5))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.Name").value("三島由紀夫"))
         .andExpect(MockMvcResultMatchers.header().string("Location", "/authors/5"))
         .andReturn();
 
