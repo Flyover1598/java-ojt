@@ -1,5 +1,6 @@
 package com.example.javaOjt.controllers;
 
+import com.example.javaOjt.beans.entities.Author;
 import com.example.javaOjt.beans.responses.author.GetAuthorResponse;
 import com.example.javaOjt.beans.responses.author.GetAuthorsResponse;
 import com.example.javaOjt.enums.AuthorSortBy;
@@ -264,5 +265,87 @@ class AuthorControllerTest {
     // Verify that the service method was never called
     Mockito.verify(authorService, Mockito.never())
         .getAuthorById(Mockito.anyInt(), Mockito.anyBoolean());
+  }
+
+  @Test
+  void postAuthor() throws Exception {
+    String requestBody = "{\"name\": \"三島由紀夫\"}";
+    Author savedAuthor = new Author();
+    savedAuthor.setId(1);
+    savedAuthor.setName("三島由紀夫");
+
+    // Mocking the service response
+    Mockito.when(authorService.postAuthor(Mockito.any(String.class)))
+        .thenReturn(new GetAuthorResponse(savedAuthor));
+
+    // Perform the POST request with the POST request body
+    mockMvc.perform(
+            MockMvcRequestBuilders.post(AUTHOR_BASE_URL).contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+        .andExpect(MockMvcResultMatchers.status().isCreated())
+        .andExpect(MockMvcResultMatchers.header().string("Location", "/authors/1"))
+        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(
+            MockMvcResultMatchers.jsonPath("$.id").value(1))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.Name").value("三島由紀夫"))
+        .andReturn();
+
+    // Verify that the service method was called with the correct parameters
+    Mockito.verify(authorService, Mockito.times(1)).postAuthor("三島由紀夫");
+  }
+
+  @Test
+  void postAuthor_empty() throws Exception {
+    String requestBody = "{\"name\": \"\"}";
+
+    // Perform the POST request with the POST request body and expect 400
+    mockMvc.perform(
+        MockMvcRequestBuilders.post(AUTHOR_BASE_URL).contentType(MediaType.APPLICATION_JSON)
+            .content(requestBody)
+    ).andExpect(MockMvcResultMatchers.status().isBadRequest()).andReturn();
+
+    // Verify that the service method was never called
+    Mockito.verify(authorService, Mockito.never()).postAuthor(Mockito.any(String.class));
+  }
+
+  @Test
+  void postAuthor_illegalKey() throws Exception {
+    String requestBody = "{\"ability\": \"\"}";
+
+    // Perform the POST request with the POST request body and expect 400
+    mockMvc.perform(
+        MockMvcRequestBuilders.post(AUTHOR_BASE_URL).contentType(MediaType.APPLICATION_JSON)
+            .content(requestBody)
+    ).andExpect(MockMvcResultMatchers.status().isBadRequest()).andReturn();
+
+    // Verify that the service method was never called
+    Mockito.verify(authorService, Mockito.never()).postAuthor(Mockito.any(String.class));
+  }
+
+  @Test
+  void postAuthor_nameAndIllegalKey() throws Exception {
+    String requestBody = "{\"ability\": \"\", \"name\": \"三島由紀夫\"}";
+    Author savedAuthor = new Author();
+    savedAuthor.setId(1);
+    savedAuthor.setName("三島由紀夫");
+
+    // Mocking the service response
+    Mockito.when(authorService.postAuthor(Mockito.any(String.class)))
+        .thenReturn(new GetAuthorResponse(savedAuthor));
+
+    // Perform the POST request with the POST request body
+    mockMvc.perform(
+            MockMvcRequestBuilders.post(AUTHOR_BASE_URL).contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+        .andExpect(MockMvcResultMatchers.status().isCreated())
+        .andExpect(MockMvcResultMatchers.header().string("Location", "/authors/1"))
+        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.Name").value("三島由紀夫"))
+
+        .andReturn();
+
+    // Verify that the service method was called with the correct parameters
+    Mockito.verify(authorService, Mockito.times(1)).postAuthor("三島由紀夫");
   }
 }

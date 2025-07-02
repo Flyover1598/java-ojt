@@ -136,4 +136,23 @@ class AuthorServiceTest {
         .getAuthorsList(AuthorSortBy.NAME, Order.DSC, List.of(targetId1, targetId2));
   }
 
+  @Test
+  void postAuthor_new() { // エッジケースが思いつかない
+    String name = "三島由紀夫";
+    Author savedAuthor = new Author();
+    savedAuthor.setName(name);
+    savedAuthor.setId(1);
+
+    // Mocking the response
+    Mockito.when(authorRepository.save(Mockito.any(Author.class))).thenReturn(savedAuthor);
+
+    // Call the service method
+    GetAuthorResponse newAuthor = authorService.postAuthor(name);
+
+    // Assertions to verify the response
+    Assertions.assertNotNull(newAuthor);
+    Assertions.assertEquals(savedAuthor.getName(), newAuthor.getName());
+    Assertions.assertNotNull(newAuthor.getId());
+  }
+
 }

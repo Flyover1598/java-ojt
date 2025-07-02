@@ -1,5 +1,6 @@
 package com.example.javaOjt.controllers;
 
+import com.example.javaOjt.beans.requests.AuthorRequest;
 import com.example.javaOjt.beans.responses.author.GetAuthorResponse;
 import com.example.javaOjt.beans.responses.author.GetAuthorsResponse;
 import com.example.javaOjt.enums.AuthorSortBy;
@@ -7,12 +8,15 @@ import com.example.javaOjt.enums.IEnum;
 import com.example.javaOjt.enums.Order;
 import com.example.javaOjt.exceptions.OjtNotFoundException;
 import com.example.javaOjt.services.AuthorService;
+import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -67,6 +71,20 @@ public class AuthorController {
       throw new OjtNotFoundException("Author not found with ID: " + id);
     }
     return ResponseEntity.ok(response);
+  }
+
+  /**
+   * Add a new author to the database by the author's name.
+   *
+   * @param requestBody JSON with the key "name". Any other value will be ignored.
+   * @return a ResponseEntity containing the URI to the added author in the headers.
+   */
+  @PostMapping("")
+  public ResponseEntity<GetAuthorResponse> postAuthor(
+      @RequestBody @Validated AuthorRequest requestBody
+  ) {
+    GetAuthorResponse savedAuthor = authorService.postAuthor(requestBody.getName());
+    return ResponseEntity.created(URI.create("/authors/" + savedAuthor.getId())).body(savedAuthor);
   }
 
 }

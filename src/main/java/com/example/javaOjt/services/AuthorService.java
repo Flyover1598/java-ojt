@@ -8,6 +8,7 @@ import com.example.javaOjt.beans.responses.author.GetAuthorsResponse;
 import com.example.javaOjt.enums.AuthorSortBy;
 import com.example.javaOjt.enums.Order;
 import com.example.javaOjt.repositories.AuthorRepository;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -73,6 +74,19 @@ public class AuthorService {
       @Nullable List<Integer> ids) { // Should return an empty list on empty DB
     attribute = (attribute == null) ? AuthorSortBy.ID : attribute;
     return new GetAuthorsResponse(authorRepository.getAuthorsList(attribute, order, ids));
+  }
+
+  /**
+   * Saves a new author to the DB with the given String as the name.
+   *
+   * @param name the name of the author to be added
+   * @return the Author that is saved to the DB
+   */
+  @Transactional
+  public GetAuthorResponse postAuthor(String name) {
+    Author newAuthor = new Author();
+    newAuthor.setName(name);
+    return new GetAuthorResponse(authorRepository.save(newAuthor));
   }
 
 }

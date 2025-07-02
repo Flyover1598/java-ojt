@@ -37,7 +37,6 @@ public class AuthorDaoImpl implements AuthorDao {
         .fetch();
   }
 
-
   public List<Author> getAuthorsList(AuthorSortBy attribute, @Nullable Order order,
       @Nullable List<Integer> ids) {
     OrderSpecifier<?> orderSpecifier = switch (attribute) {

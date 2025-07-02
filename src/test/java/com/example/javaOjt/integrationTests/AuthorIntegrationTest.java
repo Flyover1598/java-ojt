@@ -1,9 +1,12 @@
 package com.example.javaOjt.integrationTests;
 
 import com.example.javaOjt.DBTestBase;
+import com.example.javaOjt.beans.entities.Author;
+import com.example.javaOjt.beans.entities.AuthorPK;
 import com.example.javaOjt.beans.responses.author.GetAuthorResponse;
 import com.example.javaOjt.beans.responses.author.GetAuthorsResponse;
 import com.example.javaOjt.beans.responses.common.OjtExceptionResponse;
+import com.example.javaOjt.repositories.AuthorRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -25,6 +28,9 @@ class AuthorIntegrationTest extends DBTestBase {
 
   @Autowired
   private ObjectMapper objectMapper;
+
+  @Autowired
+  private AuthorRepository authorRepository;
 
   @Test
   void getAuthor_isExists() throws Exception {
@@ -211,4 +217,83 @@ class AuthorIntegrationTest extends DBTestBase {
     Assertions.assertTrue(resultEmptyList.getAuthorsSummaryList().isEmpty());
   }
 
+  @Test
+  void postAuthorTest() throws Exception {
+    String requestBody = "{\"name\": \"三島由紀夫\"}";
+
+    // Perform the POST request to create a new author
+    mockMvc.perform(
+            MockMvcRequestBuilders.post(AUTHOR_BASE_URL).contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+        .andExpect(MockMvcResultMatchers.status().isCreated())
+        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(
+            MockMvcResultMatchers.jsonPath("$.id").value(5))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.Name").value("三島由紀夫"))
+        .andExpect(MockMvcResultMatchers.header().string("Location", "/authors/5"))
+        .andReturn();
+
+    // Assertions to verify the author is created
+    Author author = authorRepository.findById(new AuthorPK(5)).orElse(null);
+    Assertions.assertNotNull(author);
+    Assertions.assertEquals("三島由紀夫", author.getName());
+    Assertions.assertNotNull(author.getCreatedTimestamp());
+    Assertions.assertNotNull(author.getUpdatedTimestamp());
+    Assertions.assertEquals(author.getCreatedTimestamp(), author.getUpdatedTimestamp());
+  }
+
+  @Test
+  void postAuthorTest_emptyName() throws Exception {
+    String requestBody = "{\"name\": \"\"}";
+
+    // Perform the POST request with the POST request body and expect 400
+    mockMvc.perform(
+        MockMvcRequestBuilders.post(AUTHOR_BASE_URL).contentType(MediaType.APPLICATION_JSON)
+            .content(requestBody)
+    ).andExpect(MockMvcResultMatchers.status().isBadRequest()).andReturn();
+
+    // Assertions to verify the author is never created
+    Author author = authorRepository.findById(new AuthorPK(5)).orElse(null);
+    Assertions.assertNull(author);
+  }
+
+  @Test
+  void postAuthorTest_illegalKey() throws Exception {
+    String requestBody = "{\"ability\": \"\"}";
+
+    // Perform the POST request with the POST request body and expect 400
+    mockMvc.perform(
+        MockMvcRequestBuilders.post(AUTHOR_BASE_URL).contentType(MediaType.APPLICATION_JSON)
+            .content(requestBody)
+    ).andExpect(MockMvcResultMatchers.status().isBadRequest()).andReturn();
+
+    // Assertions to verify the author is never created
+    Author author = authorRepository.findById(new AuthorPK(5)).orElse(null);
+    Assertions.assertNull(author);
+  }
+
+  @Test
+  void postAuthorTest_nameAndIllegalKey() throws Exception {
+    String requestBody = "{\"ability\": \"\", \"name\": \"三島由紀夫\"}";
+
+    // Perform the POST request to create a new author
+    mockMvc.perform(
+            MockMvcRequestBuilders.post(AUTHOR_BASE_URL).contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+        .andExpect(MockMvcResultMatchers.status().isCreated())
+        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(
+            MockMvcResultMatchers.jsonPath("$.id").value(5))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.Name").value("三島由紀夫"))
+        .andExpect(MockMvcResultMatchers.header().string("Location", "/authors/5"))
+        .andReturn();
+
+    // Assertions to verify the author is created
+    Author author = authorRepository.findById(new AuthorPK(5)).orElse(null);
+    Assertions.assertNotNull(author);
+    Assertions.assertEquals("三島由紀夫", author.getName());
+    Assertions.assertNotNull(author.getCreatedTimestamp());
+    Assertions.assertNotNull(author.getUpdatedTimestamp());
+    Assertions.assertEquals(author.getCreatedTimestamp(), author.getUpdatedTimestamp());
+  }
 }
