@@ -8,6 +8,7 @@ import com.example.javaOjt.beans.responses.author.GetAuthorsResponse;
 import com.example.javaOjt.enums.AuthorSortBy;
 import com.example.javaOjt.enums.Order;
 import com.example.javaOjt.repositories.AuthorRepository;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -81,6 +82,8 @@ public class AuthorService {
    * @param name the name of the author to be added
    * @return GetAuthorResponse of the author that was saved to the DB
    */
+
+  @Transactional
   public GetAuthorResponse postAuthor(String name) {
     Author newAuthor = new Author();
     newAuthor.setName(name);
