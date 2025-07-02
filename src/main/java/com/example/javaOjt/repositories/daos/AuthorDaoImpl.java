@@ -72,6 +72,9 @@ public class AuthorDaoImpl implements AuthorDao {
   @Modifying
   @Transactional
   public void deleteByIdPhysical(Integer id) {
+    jpaQueryFactory.delete(QBook.book)
+        .where(QBook.book.authorId.eq(id))
+          .execute();
     jpaQueryFactory.delete(QAuthor.author)
         .where(QAuthor.author.id.eq(id))
         .execute();

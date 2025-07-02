@@ -382,20 +382,16 @@ class AuthorIntegrationTest extends DBTestBase {
   }
 
   @Test
-  @Transactional
   void deleteAuthorPhysicalTest() throws Exception {
     int targetId = 1;
 
     // Perform the DELETE request and expect 204
     mockMvc.perform(MockMvcRequestBuilders.delete(AUTHOR_BASE_URL + "/" + targetId)
-            .param("permanent", "true"))
+            .param("deletePermanently", "true"))
         .andExpect(MockMvcResultMatchers.status().isNoContent())
         .andReturn();
 
-    // Assertions to verify that the author is deleted physically
-    em.flush();
-    em.clear();
-    boolean exists = em.find(Author.class, new AuthorPK(targetId)) != null;
+    boolean exists = authorRepository.existsById(new AuthorPK(targetId));
     Assertions.assertFalse(exists);
   }
 
