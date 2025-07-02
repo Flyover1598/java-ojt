@@ -84,7 +84,7 @@ public class AuthorController {
       @RequestBody @Validated AuthorRequest requestBody
   ) {
     GetAuthorResponse savedAuthor = authorService.postAuthor(requestBody.getName());
-    return ResponseEntity.created(URI.create("/authors/" + savedAuthor.getId())).body(null);
+    return ResponseEntity.created(URI.create("/authors/" + savedAuthor.getId())).body(savedAuthor);
   }
 
 }

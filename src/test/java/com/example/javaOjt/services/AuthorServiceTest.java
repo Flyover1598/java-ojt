@@ -154,7 +154,7 @@ class AuthorServiceTest {
     Assertions.assertEquals(savedAuthor.getName(), newAuthor.getName());
     Assertions.assertNotNull(newAuthor.getId());
   }
-
+  
   @Test
   void patchAuthor() {
     Author toUpdateAuthor = new Author();
