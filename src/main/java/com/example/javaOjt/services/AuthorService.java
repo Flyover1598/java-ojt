@@ -94,6 +94,7 @@ public class AuthorService {
    * @param name new name of the author
    * @return GetAuthorResponse of the author that was updated
    */
+  @Transactional
   public GetAuthorResponse patchAuthor(Integer id, String name) {
     Optional<Author> author = authorRepository.findById(new AuthorPK(id));
     if (author.isEmpty()) {
