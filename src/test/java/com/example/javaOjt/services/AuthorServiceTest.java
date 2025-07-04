@@ -9,6 +9,7 @@ import com.example.javaOjt.beans.responses.author.GetAuthorsResponse;
 import com.example.javaOjt.enums.AuthorSortBy;
 import com.example.javaOjt.enums.Order;
 import com.example.javaOjt.repositories.AuthorRepository;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
@@ -174,6 +175,85 @@ class AuthorServiceTest {
     Assertions.assertNotNull(updatedAuthor);
     Assertions.assertEquals(toUpdateAuthor.getName(), updatedAuthor.getName());
     Assertions.assertEquals(toUpdateAuthor.getId(), updatedAuthor.getId());
+  }
+
+  /* deleteAuthor's Service takes int id and bool permanent,
+   * and returns notFoundResponse when the ID does not exist.
+   * Otherwise, it creates a GetAuthorResponse from the author, which will be returned later.
+   * It then invokes deleteById if permanent = true,
+   * and checks if the id already has a delete date when permanent = false.
+   * deleteByIdLogical will be called only when the id does not already have a delete date*/
+
+  @Test
+  void deleteAuthorLogical() {
+    Author toDeleteAuthor = new Author();
+    toDeleteAuthor.setName("門畑顕博");
+    toDeleteAuthor.setId(1);
+
+    // Mocking service response
+    Mockito.when(authorRepository.findById(new AuthorPK(1)))
+        .thenReturn(Optional.of(toDeleteAuthor));
+
+    // Call the service method
+    GetAuthorResponse response = authorService.deleteAuthor(toDeleteAuthor.getId(), false);
+
+    // Assertions to verify the response
+    Assertions.assertEquals(new GetAuthorResponse(toDeleteAuthor), response);
+    Mockito.verify(authorRepository, Mockito.times(1)).deleteByIdLogical(toDeleteAuthor);
+  }
+
+  @Test
+  void deleteAuthorPhysical() {
+    Author toDeleteAuthor = new Author();
+    toDeleteAuthor.setName("門畑顕博");
+    toDeleteAuthor.setId(1);
+
+    // Mocking service response
+    Mockito.when(authorRepository.findById(new AuthorPK(toDeleteAuthor.getId())))
+        .thenReturn(Optional.of(toDeleteAuthor));
+
+    // Call the service method
+    GetAuthorResponse response = authorService.deleteAuthor(toDeleteAuthor.getId(), true);
+
+    // Assertions to verify the response
+    Assertions.assertEquals(new GetAuthorResponse(toDeleteAuthor), response);
+    Mockito.verify(authorRepository, Mockito.times(1)).
+        deleteById(new AuthorPK(toDeleteAuthor.getId()));
+  }
+
+  @Test
+  void deleteAuthor_nonExistentId() {
+    int targetId = Integer.MIN_VALUE;
+
+    // The response does not have to be mocked
+
+    // Call the service method
+    GetAuthorResponse response = authorService.deleteAuthor(targetId, false);
+
+    // Assertions to verify the response
+    Assertions.assertEquals(GetAuthorResponse.notFoundResponse(), response);
+    Mockito.verify(authorRepository, Mockito.never()).deleteByIdLogical(Mockito.any(Author.class));
+    Mockito.verify(authorRepository, Mockito.never()).deleteById(Mockito.any(AuthorPK.class));
+  }
+
+  @Test
+  void deleteAuthorLogical_softDeletedId() {
+    int targetId = 1;
+    Author softDeletedAuthor = new Author();
+    softDeletedAuthor.setId(1);
+    softDeletedAuthor.setName("Soft Deleted");
+    softDeletedAuthor.setDeletedTimestamp(ZonedDateTime.now());
+
+    // Mocking service response
+    Mockito.when(authorRepository.findById(new AuthorPK(1)))
+        .thenReturn(Optional.of(softDeletedAuthor));
+
+    // Call the service method
+    GetAuthorResponse response = authorService.deleteAuthor(1, false);
+
+    // Assertions to verify the response
+    Assertions.assertEquals(new GetAuthorResponse(softDeletedAuthor), response);
+    Mockito.verify(authorRepository, Mockito.never()).deleteByIdLogical(softDeletedAuthor);
   }
 
 }

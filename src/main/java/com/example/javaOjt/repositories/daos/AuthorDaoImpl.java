@@ -54,4 +54,9 @@ public class AuthorDaoImpl implements AuthorDao {
         .orderBy(orderSpecifier)
         .fetch();
   }
+
+  public void deleteByIdLogical(Author author) {
+
+  }
+
 }

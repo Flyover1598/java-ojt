@@ -54,6 +54,24 @@ class AuthorDaoImplTest extends DBTestBase {
     Assertions.assertEquals(2, result.getFirst().getId());
     Assertions.assertEquals("J. K. Rowling", result.getLast().getName());
     Assertions.assertEquals("夏目漱石", result.getFirst().getName());
+  }
+
+  @Test
+  void deleteByIdLogical() {
+    int targetId = 1;
+
+    // Ensures the author exists
+    Author author = authorDaoImpl.getAuthorsList(AuthorSortBy.ID, Order.ASC, List.of(targetId))
+        .getFirst();
+    Assertions.assertNull(author.getDeletedTimestamp());
+
+    // Perform the logical delete
+    authorDaoImpl.deleteByIdLogical(author);
+
+    // check deletedTimestamp
+    Author updated = authorDaoImpl.getAuthorsList(AuthorSortBy.ID, Order.ASC, List.of(targetId))
+        .getFirst();
+    Assertions.assertNotNull(updated.getDeletedTimestamp());
 
   }
 }
