@@ -108,6 +108,7 @@ public class AuthorService {
     return new GetAuthorResponse(authorRepository.save(toUpdateAuthor));
   }
 
+  @Transactional
   public GetAuthorResponse deleteAuthor(Integer id, Boolean permanent) {
     AuthorPK authorPK = new AuthorPK(id);
     Author toDeleteAuthor = authorRepository.findById(authorPK).orElse(null);

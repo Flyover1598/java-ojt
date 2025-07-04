@@ -250,7 +250,7 @@ class AuthorServiceTest {
         .thenReturn(Optional.of(softDeletedAuthor));
 
     // Call the service method
-    GetAuthorResponse response = authorService.deleteAuthor(1, false);
+    GetAuthorResponse response = authorService.deleteAuthor(targetId, false);
 
     // Assertions to verify the response
     Assertions.assertEquals(new GetAuthorResponse(softDeletedAuthor), response);

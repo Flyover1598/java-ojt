@@ -15,7 +15,6 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.lang.Nullable;
 
 // @Repository
@@ -58,7 +57,6 @@ public class AuthorDaoImpl implements AuthorDao {
         .fetch();
   }
 
-  @Modifying
   @Transactional
   public void deleteByIdLogical(Integer id) {
     ZonedDateTime now = ZonedDateTime.now(); // Calculate the timestamp once
@@ -69,7 +67,11 @@ public class AuthorDaoImpl implements AuthorDao {
         .execute();
   }
 
-  @Modifying
+  /**
+   * Hard-deletes the author AND all books associated therewith.
+   *
+   * @param id id of the author.
+   */
   @Transactional
   public void deleteByIdPhysical(Integer id) {
     jpaQueryFactory.delete(QBook.book)
