@@ -199,7 +199,7 @@ class AuthorServiceTest {
 
     // Assertions to verify the response
     Assertions.assertEquals(new GetAuthorResponse(toDeleteAuthor), response);
-    Mockito.verify(authorRepository, Mockito.times(1)).deleteByIdLogical(toDeleteAuthor);
+    Mockito.verify(authorRepository, Mockito.times(1)).deleteByIdLogical(toDeleteAuthor.getId());
   }
 
   @Test
@@ -218,7 +218,7 @@ class AuthorServiceTest {
     // Assertions to verify the response
     Assertions.assertEquals(new GetAuthorResponse(toDeleteAuthor), response);
     Mockito.verify(authorRepository, Mockito.times(1)).
-        deleteById(new AuthorPK(toDeleteAuthor.getId()));
+        deleteByIdPhysical(toDeleteAuthor.getId());
   }
 
   @Test
@@ -232,28 +232,29 @@ class AuthorServiceTest {
 
     // Assertions to verify the response
     Assertions.assertEquals(GetAuthorResponse.notFoundResponse(), response);
-    Mockito.verify(authorRepository, Mockito.never()).deleteByIdLogical(Mockito.any(Author.class));
-    Mockito.verify(authorRepository, Mockito.never()).deleteById(Mockito.any(AuthorPK.class));
+    Mockito.verify(authorRepository, Mockito.never()).deleteByIdLogical(Mockito.any(Integer.class));
+    Mockito.verify(authorRepository, Mockito.never())
+        .deleteByIdPhysical(Mockito.any(Integer.class));
   }
 
   @Test
   void deleteAuthorLogical_softDeletedId() {
     int targetId = 1;
     Author softDeletedAuthor = new Author();
-    softDeletedAuthor.setId(1);
+    softDeletedAuthor.setId(targetId);
     softDeletedAuthor.setName("Soft Deleted");
     softDeletedAuthor.setDeletedTimestamp(ZonedDateTime.now());
 
     // Mocking service response
-    Mockito.when(authorRepository.findById(new AuthorPK(1)))
+    Mockito.when(authorRepository.findById(new AuthorPK(targetId)))
         .thenReturn(Optional.of(softDeletedAuthor));
 
     // Call the service method
-    GetAuthorResponse response = authorService.deleteAuthor(1, false);
+    GetAuthorResponse response = authorService.deleteAuthor(targetId, false);
 
     // Assertions to verify the response
     Assertions.assertEquals(new GetAuthorResponse(softDeletedAuthor), response);
-    Mockito.verify(authorRepository, Mockito.never()).deleteByIdLogical(softDeletedAuthor);
+    Mockito.verify(authorRepository, Mockito.never()).deleteByIdLogical(targetId);
   }
 
 }

@@ -108,8 +108,22 @@ public class AuthorService {
     return new GetAuthorResponse(authorRepository.save(toUpdateAuthor));
   }
 
+  @Transactional
   public GetAuthorResponse deleteAuthor(Integer id, Boolean permanent) {
-    return GetAuthorResponse.notFoundResponse();
+    AuthorPK authorPK = new AuthorPK(id);
+    Author toDeleteAuthor = authorRepository.findById(authorPK).orElse(null);
+    if (toDeleteAuthor == null) {
+      return GetAuthorResponse.notFoundResponse();
+    }
+    GetAuthorResponse response = new GetAuthorResponse(toDeleteAuthor);
+    if (permanent) {
+      authorRepository.deleteByIdPhysical(id);
+    } else {
+      if (toDeleteAuthor.getDeletedTimestamp() == null) {
+        authorRepository.deleteByIdLogical(id);
+      }
+    }
+    return response;
   }
 
 }

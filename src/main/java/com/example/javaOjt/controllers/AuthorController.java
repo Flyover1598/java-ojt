@@ -13,6 +13,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -84,8 +85,8 @@ public class AuthorController {
   public ResponseEntity<GetAuthorResponse> postAuthor(
       @RequestBody @Validated AuthorRequest requestBody
   ) {
-    GetAuthorResponse respon = authorService.postAuthor(requestBody.getName());
-    return ResponseEntity.created(URI.create("/authors/" + respon.getId())).body(null);
+    GetAuthorResponse response = authorService.postAuthor(requestBody.getName());
+    return ResponseEntity.created(URI.create("/authors/" + response.getId())).body(response);
   }
 
   /**
@@ -102,6 +103,18 @@ public class AuthorController {
       @RequestBody @Validated AuthorRequest requestBody
   ) {
     GetAuthorResponse response = authorService.patchAuthor(id, requestBody.getName());
+    if (!response.isExists()) {
+      throw new OjtNotFoundException("Author not found with ID: " + id);
+    }
+    return ResponseEntity.noContent().build();
+  }
+
+  @DeleteMapping("/{id}")
+  public ResponseEntity<GetAuthorResponse> deleteAuthor(
+      @PathVariable(value = "id") Integer id,
+      @RequestParam(value = "deletePermanently", required = false) boolean permanent
+  ) {
+    GetAuthorResponse response = authorService.deleteAuthor(id, permanent);
     if (!response.isExists()) {
       throw new OjtNotFoundException("Author not found with ID: " + id);
     }

@@ -10,6 +10,8 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.transaction.Transactional;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -55,8 +57,29 @@ public class AuthorDaoImpl implements AuthorDao {
         .fetch();
   }
 
-  public void deleteByIdLogical(Author author) {
+  @Transactional
+  public void deleteByIdLogical(Integer id) {
+    ZonedDateTime now = ZonedDateTime.now(); // Calculate the timestamp once
+    jpaQueryFactory.update(QAuthor.author)
+        .set(QAuthor.author.deletedTimestamp, now)
+        .set(QAuthor.author.updatedTimestamp, now) // Use the same timestamp for both fields
+        .where(QAuthor.author.id.eq(id))
+        .execute();
+  }
 
+  /**
+   * Hard-deletes the author AND all books associated therewith.
+   *
+   * @param id id of the author.
+   */
+  @Transactional
+  public void deleteByIdPhysical(Integer id) {
+    jpaQueryFactory.delete(QBook.book)
+        .where(QBook.book.authorId.eq(id))
+        .execute();
+    jpaQueryFactory.delete(QAuthor.author)
+        .where(QAuthor.author.id.eq(id))
+        .execute();
   }
 
 }
